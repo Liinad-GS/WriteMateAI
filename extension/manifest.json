@@ -1,0 +1,33 @@
+{
+  "manifest_version": 3,
+  "name": "AI Writing Assistant MVP",
+  "version": "0.2.0",
+  "description": "Translate, fix grammar, improve tone, and rewrite selected text on web pages.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "http://localhost:8787/*",
+    "https://*.up.railway.app/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "AI Writing Assistant"
+  }
+}
