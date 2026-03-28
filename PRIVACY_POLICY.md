@@ -1,12 +1,12 @@
 # Privacy Policy
 
-Last updated: March 26, 2026
+Last updated: March 27, 2026
 
 ## Overview
 
-AI Writing Assistant helps users improve, translate, and rewrite selected text on web pages.
+WriteMate AI helps users improve, translate, and rewrite selected text on web pages.
 
-The extension sends only the text the user explicitly selects and submits for processing to the local backend configured by the user. The backend may then send that text to the chosen AI provider such as OpenAI.
+The extension sends only the text the user explicitly selects and submits for processing to the configured backend service. That backend may then send the text to the chosen AI provider such as OpenAI.
 
 ## What data the extension processes
 
@@ -17,6 +17,7 @@ The extension may process:
 - The selected target language and tone option
 - Local extension settings such as preferred translation language, app language, and daily free-limit counters
 - Feedback text submitted by the user through the feedback form
+- Product analytics events related to extension usage, errors, and performance
 
 ## What data is not collected by default
 
@@ -30,9 +31,27 @@ The extension does not intentionally collect or store by default:
 
 ## AI processing
 
-When a user requests a transformation, the selected text is sent to the local backend server running on the user's machine. That backend can forward the request to a configured AI provider.
+When a user requests a transformation, the selected text is sent to the configured backend service. That backend can forward the request to a configured AI provider.
 
 The AI provider used depends on the backend configuration controlled by the user or operator.
+
+## Analytics
+
+The extension may send limited analytics events to the configured backend to help operate and improve the product.
+
+These events can include:
+
+- Event name
+- Timestamp
+- Anonymous extension-specific user identifier
+- Session identifier
+- Extension version
+- Page host
+- Current action
+- Selection kind
+- Success or failure state
+- Error code or error message
+- Performance and diagnostic properties
 
 ## Feedback submissions
 
@@ -58,6 +77,8 @@ The extension uses local browser storage for:
 - Preferred translation language
 - App language
 - Daily usage counters
+- Backend URL override
+- Anonymous extension-specific analytics user ID
 
 ## Data retention
 

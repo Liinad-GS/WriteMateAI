@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WriteMate AI Privacy Policy</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f3ee;
+        --card: #fffdf9;
+        --text: #1e1a17;
+        --muted: #62584f;
+        --line: #dfd5ca;
+        --accent: #b85c38;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        background:
+          radial-gradient(circle at top left, rgba(184, 92, 56, 0.12), transparent 30%),
+          linear-gradient(180deg, #f8f4ef 0%, var(--bg) 100%);
+        color: var(--text);
+        line-height: 1.65;
+      }
+
+      main {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 48px 20px 72px;
+      }
+
+      .card {
+        background: color-mix(in srgb, var(--card) 94%, white 6%);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 32px;
+        box-shadow: 0 18px 50px rgba(44, 34, 24, 0.08);
+      }
+
+      h1, h2 {
+        line-height: 1.15;
+        margin: 0 0 16px;
+      }
+
+      h1 {
+        font-size: clamp(2.2rem, 5vw, 3.4rem);
+        letter-spacing: -0.03em;
+      }
+
+      h2 {
+        font-size: 1.35rem;
+        margin-top: 32px;
+      }
+
+      p {
+        margin: 0 0 14px;
+      }
+
+      ul {
+        margin: 0 0 16px 20px;
+        padding: 0;
+      }
+
+      li + li {
+        margin-top: 8px;
+      }
+
+      .eyebrow {
+        display: inline-block;
+        margin-bottom: 12px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(184, 92, 56, 0.08);
+        color: var(--accent);
+        font: 600 0.82rem/1.1 Arial, sans-serif;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .updated {
+        color: var(--muted);
+        margin-bottom: 24px;
+      }
+
+      code {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-size: 0.95em;
+        background: rgba(30, 26, 23, 0.05);
+        padding: 0.1em 0.35em;
+        border-radius: 6px;
+      }
+
+      footer {
+        margin-top: 28px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      @media (max-width: 640px) {
+        .card {
+          padding: 24px 18px;
+          border-radius: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="card">
+        <div class="eyebrow">WriteMate AI</div>
+        <h1>Privacy Policy</h1>
+        <p class="updated">Last updated: March 27, 2026</p>
+
+        <h2>Overview</h2>
+        <p>WriteMate AI helps users improve, translate, and rewrite selected text on web pages.</p>
+        <p>The extension sends only the text the user explicitly selects and submits for processing to the configured backend service. That backend may then send the text to the chosen AI provider such as OpenAI.</p>
+
+        <h2>What data the extension processes</h2>
+        <ul>
+          <li>Text the user explicitly selects and sends for AI processing</li>
+          <li>The chosen action such as translate, grammar, improve, or tone</li>
+          <li>The selected target language and tone option</li>
+          <li>Local extension settings such as preferred translation language, app language, and daily free-limit counters</li>
+          <li>Feedback text submitted by the user through the feedback form</li>
+          <li>Product analytics events related to extension usage, errors, and performance</li>
+        </ul>
+
+        <h2>What data is not collected by default</h2>
+        <ul>
+          <li>Full browsing history</li>
+          <li>Full page content outside the selected text</li>
+          <li>User passwords</li>
+          <li>Payment information</li>
+          <li>Account credentials for third-party services</li>
+        </ul>
+
+        <h2>AI processing</h2>
+        <p>When a user requests a transformation, the selected text is sent to the configured backend service. That backend can forward the request to a configured AI provider.</p>
+        <p>The AI provider used depends on the backend configuration controlled by the user or operator.</p>
+
+        <h2>Analytics</h2>
+        <p>The extension may send limited analytics events to the configured backend to help operate and improve the product.</p>
+        <ul>
+          <li>Event name</li>
+          <li>Timestamp</li>
+          <li>Anonymous extension-specific user identifier</li>
+          <li>Session identifier</li>
+          <li>Extension version</li>
+          <li>Page host</li>
+          <li>Current action</li>
+          <li>Selection kind</li>
+          <li>Success or failure state</li>
+          <li>Error code or error message</li>
+          <li>Performance and diagnostic properties</li>
+        </ul>
+
+        <h2>Feedback submissions</h2>
+        <p>If the user submits feedback, the extension sends the feedback text and limited technical metadata to the backend. The backend may forward it to a configured feedback destination such as Google Sheets through a webhook.</p>
+        <p>Feedback metadata can include timestamp, extension version, app language, current action, model tier, target language, tone, browser language, page host, and selection kind.</p>
+
+        <h2>Storage</h2>
+        <p>The extension uses local browser storage for:</p>
+        <ul>
+          <li>Preferred translation language</li>
+          <li>App language</li>
+          <li>Daily usage counters</li>
+          <li>Backend URL override</li>
+          <li>Anonymous extension-specific analytics user ID</li>
+        </ul>
+
+        <h2>Data retention</h2>
+        <p>Local browser settings remain on the user's device until the user clears extension storage or removes the extension.</p>
+        <p>Any retention outside the browser depends on the configured backend and third-party services used by that backend.</p>
+
+        <h2>Security</h2>
+        <p>Users should avoid submitting sensitive personal, financial, medical, or confidential company information unless they trust the configured backend and AI provider.</p>
+
+        <h2>Contact</h2>
+        <p>For privacy questions, use the support or feedback contact published with the extension listing.</p>
+
+        <footer>This page is intended to be published at a public HTTPS URL for the Chrome Web Store listing.</footer>
+      </section>
+    </main>
+  </body>
+  </html>
