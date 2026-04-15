@@ -154,6 +154,11 @@ The privacy policy is available in two forms:
 - GitHub Pages-ready HTML: [docs/privacy-policy.html](docs/privacy-policy.html)
 - GitHub Pages landing page: [docs/index.html](docs/index.html)
 
+Live pages:
+
+- Project page: [https://liinad-gs.github.io/WriteMateAI/](https://liinad-gs.github.io/WriteMateAI/)
+- Privacy policy: [https://liinad-gs.github.io/WriteMateAI/privacy-policy.html](https://liinad-gs.github.io/WriteMateAI/privacy-policy.html)
+
 After publishing the repository, enable GitHub Pages for the `docs/` folder to get a public HTTPS privacy policy URL for Chrome Web Store.
 
 ## Portfolio Notes
