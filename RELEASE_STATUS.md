@@ -1,6 +1,6 @@
 # Release Status
 
-Last updated: March 28, 2026
+Last updated: April 15, 2026
 
 ## Ready
 
@@ -10,6 +10,8 @@ Last updated: March 28, 2026
 - Store packaging switches the content script to `BUILD_CHANNEL = "production"`
 - Privacy policy text exists in `PRIVACY_POLICY.md`
 - Public privacy policy HTML page exists in `docs/privacy-policy.html`
+- Public privacy policy URL is live at `https://liinad-gs.github.io/WriteMateAI/privacy-policy.html`
+- Public GitHub Pages project page is live at `https://liinad-gs.github.io/WriteMateAI/`
 - Chrome Web Store field copy exists in `CHROME_WEB_STORE_FIELDS.md`
 - Submission guidance exists in `CHROME_WEB_STORE_SUBMISSION.md`
 - Screenshot plan exists in `SCREENSHOT_SHOTLIST.md`
@@ -19,7 +21,6 @@ Last updated: March 28, 2026
 
 ## Still Needed Before Submission
 
-- Public privacy policy URL
 - Production backend HTTPS URL
 - Production `CORS_ALLOWED_ORIGINS` set to the final Chrome extension origin
 - Final release build generated with the production backend URL
@@ -29,9 +30,10 @@ Last updated: March 28, 2026
 
 ## Highest Priority Next Steps
 
-1. Publish privacy policy through Google Docs or another public HTTPS page
-2. Confirm the production backend URL
-3. Set `CORS_ALLOWED_ORIGINS` for the production backend
-4. Run `node scripts/package-extension.mjs --backend-url=https://your-backend.example.com`
-5. Load `dist/chrome-store/` in Chrome and smoke test the packaged build
-6. Upload the zip and listing assets to Chrome Web Store
+1. Confirm or deploy the production backend URL
+2. Run `node scripts/package-extension.mjs --backend-url=https://your-backend.example.com`
+3. Create the Chrome Web Store draft and get the extension ID
+4. Set `CORS_ALLOWED_ORIGINS=chrome-extension://<extension-id>` for the production backend
+5. Rebuild the final zip with the production backend URL
+6. Load `dist/chrome-store/` in Chrome and smoke test the packaged build
+7. Upload the final zip and listing assets to Chrome Web Store

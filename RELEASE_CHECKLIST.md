@@ -127,6 +127,5 @@
 
 ## Remaining Gaps Right Now
 
-- Public privacy-policy URL is still missing
 - Store screenshots are still missing
 - Real payment flow is still not implemented

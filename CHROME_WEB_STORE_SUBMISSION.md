@@ -78,7 +78,9 @@ Keep the screenshots focused on:
 
 ## Privacy Policy URL
 
-Publish [`PRIVACY_POLICY.md`](/Users/daniil/Documents/GoPracticeCodingAgents/LGext/PRIVACY_POLICY.md) at a public HTTPS URL and use that link in the store listing.
+Use this public HTTPS URL in the store listing:
+
+`https://liinad-gs.github.io/WriteMateAI/privacy-policy.html`
 
 ## Permission Justifications
 
@@ -175,7 +177,7 @@ Before submission, decide what support contact will appear in the listing:
 - website
 - privacy contact
 
-Update [`PRIVACY_POLICY.md`](/Users/daniil/Documents/GoPracticeCodingAgents/LGext/PRIVACY_POLICY.md) if you want a more explicit contact section.
+Update [`PRIVACY_POLICY.md`](PRIVACY_POLICY.md) if you want a more explicit contact section.
 
 ## Final Pre-Submit Checks
 
