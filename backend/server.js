@@ -454,6 +454,15 @@ function buildHealthResponse() {
     cors: {
       restricted: allowedOrigins.length > 0
     },
+    ai: {
+      provider: aiProvider,
+      openaiConfigured: Boolean(openAiApiKey),
+      deepSeekConfigured: Boolean(deepSeekApiKey),
+      mockFallbackEnabled: ENABLE_MOCK_AI_FALLBACK
+    },
+    feedback: {
+      configured: Boolean(feedbackWebhookUrl)
+    },
     analytics: {
       configured: Boolean(
         bigQueryProjectId &&
