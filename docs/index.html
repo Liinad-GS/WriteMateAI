@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WriteMate AI</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: #10263d;
+        background: #f7fbff;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+      }
+
+      main {
+        width: min(860px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 56px 0;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 44px;
+        line-height: 1.05;
+      }
+
+      p {
+        max-width: 680px;
+        font-size: 18px;
+        line-height: 1.65;
+      }
+
+      ul {
+        display: grid;
+        gap: 10px;
+        max-width: 720px;
+        padding-left: 22px;
+        font-size: 16px;
+        line-height: 1.55;
+      }
+
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+      }
+
+      a {
+        color: #1e5c9a;
+        font-weight: 700;
+      }
+
+      nav a {
+        padding: 10px 14px;
+        border: 1px solid rgba(30, 92, 154, 0.25);
+        border-radius: 8px;
+        background: #ffffff;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>WriteMate AI</h1>
+      <p>
+        WriteMate AI is a Chrome extension for AI-assisted translation and writing directly inside web pages.
+        It combines a Manifest V3 extension, a Node.js backend proxy, streaming LLM responses, usage limits,
+        analytics, and feedback collection.
+      </p>
+      <ul>
+        <li>Translate selected text without switching tabs</li>
+        <li>Fix grammar, improve clarity, and adjust tone</li>
+        <li>Stream AI output as one progressively growing result</li>
+        <li>Use a backend proxy with OpenAI, BigQuery analytics, and feedback webhooks</li>
+      </ul>
+      <nav aria-label="Project links">
+        <a href="privacy-policy.html">Privacy Policy</a>
+        <a href="architecture.md">Architecture</a>
+      </nav>
+    </main>
+  </body>
+</html>

@@ -1,8 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "AI Writing Assistant MVP",
+  "name": "WriteMate AI",
   "version": "0.2.0",
-  "description": "Translate, fix grammar, improve tone, and rewrite selected text on web pages.",
+  "description": "All-in-one writing, translation, and communication assistant for real conversations.",
+  "icons": {
+    "16": "assets/icon-16.png",
+    "32": "assets/icon-32.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
+  },
   "permissions": [
     "storage"
   ],
@@ -18,6 +24,9 @@
       "matches": [
         "<all_urls>"
       ],
+      "all_frames": true,
+      "match_about_blank": true,
+      "match_origin_as_fallback": true,
       "js": [
         "content.js"
       ],
@@ -27,7 +36,28 @@
       "run_at": "document_idle"
     }
   ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/writemate-icon-only.png",
+        "assets/writemate-logo.png",
+        "assets/writemate-mark.png",
+        "assets/icon-16.png",
+        "assets/icon-32.png",
+        "assets/icon-48.png",
+        "assets/icon-128.png"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
   "action": {
-    "default_title": "AI Writing Assistant"
+    "default_icon": {
+      "16": "assets/icon-16.png",
+      "32": "assets/icon-32.png",
+      "48": "assets/icon-48.png"
+    },
+    "default_title": "WriteMate AI"
   }
 }

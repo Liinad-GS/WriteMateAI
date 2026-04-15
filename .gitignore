@@ -1,7 +1,18 @@
 .DS_Store
+**/.DS_Store
 node_modules/
 backend/.env
+backend/.env.*
+!backend/.env.example
+backend/gopracticegmailagent-2d7cf8a51e94.json
+backend/*credential*.json
+backend/*credentials*.json
+backend/*service-account*.json
+backend/*service_account*.json
 backend/node_modules/
 *.log
+dist/
+*.mov
+*.mp4
 
 *.swp

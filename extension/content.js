@@ -1,10 +1,23 @@
 const DEFAULT_TARGET_LANGUAGE = "Spanish"
+const BUILD_CHANNEL = "development"
 const LANGUAGE_PREFERENCE_KEY = "preferredTargetLanguage"
+const CORRESPONDENCE_LANGUAGE_BY_HOST_KEY = "correspondenceLanguageByHost"
+const LANGUAGE_PREFERENCE_PROMPT_KEY = "languagePreferencePromptSeen"
 const APP_LANGUAGE_STORAGE_KEY = "appLanguage"
+const FIRST_RUN_ONBOARDING_KEY = "firstRunOnboardingSeen"
+const DAILY_USAGE_STORAGE_KEY = "dailyFreeUsage"
 const RUSSIAN_LANGUAGE = "Russian"
-const DEFAULT_MODEL_TIER = "nano"
 const DEFAULT_APP_LANGUAGE = "en"
 const DEFAULT_TONE = "professional"
+const IS_DEVELOPMENT_BUILD = BUILD_CHANNEL !== "production"
+const GOOGLE_DOCS_HOST = "docs.google.com"
+const GOOGLE_DOCS_DOCUMENT_PATH_PREFIX = "/document/"
+const GOOGLE_DOCS_SELECTION_SELECTORS = [
+  ".kix-selection-overlay",
+  ".kix-selection-overlay-native",
+  "[class*='kix-selection-overlay']",
+  "[class*='kix-overlay-under-text']"
+]
 const POPULAR_LANGUAGES = [
   "English",
   "Spanish",
@@ -73,13 +86,17 @@ const UI_STRINGS = {
     feedback_placeholder: "Tell us what is missing or what makes the extension hard to use",
     send_feedback: "Send feedback",
     close: "Close",
-    model_help: "This is the model choice. Mini usually answers faster, but it is about 5x more expensive by token limits.",
-    language_help: "Pick your main correspondence language here. Russian text will suggest that language, and other languages will suggest Russian.",
-    model_buy_next: "Thanks for your interest. This $2 access flow is not live yet, and no money has been charged. I will count this click as purchase intent for the upcoming paid option.",
+    preferred_badge: "preferred",
+    language_help: "Choose your main correspondence language. Your text suggests the conversation language, and vice versa.",
+    model_buy_next: "Thanks for your interest. This $2 access flow is not live yet, and no money has been charged. For this local purchase simulation, today's free limit has been reset and the app is available again.",
     feedback_saved: "Thanks, your feedback was sent.",
     feedback_failed: "Feedback could not be sent yet. Please check the feedback webhook setup.",
     no_text: "No text selected.",
     working: "Working on it...",
+    loading_translate: "Translating your text...",
+    loading_grammar: "Checking grammar and spelling...",
+    loading_improve: "Improving clarity and flow...",
+    loading_tone: "Adjusting the tone...",
     nothing_apply: "Nothing to apply yet.",
     unsupported_field: "This field is not supported yet.",
     copied: "Result copied.",
@@ -88,7 +105,32 @@ const UI_STRINGS = {
     replaced: "Text replaced.",
     ready: "",
     done_page: "Done. Review the result below and copy it if needed.",
-    done_editable: "Done. Review the result below and click Replace text if it looks right.",
+    done_editable: "",
+    onboarding_badge: "First time here",
+    onboarding_title: "Hi!",
+    onboarding_text: "This app helps you translate text right in the browser without breaking your flow.",
+    onboarding_text_secondary: "If you switch between 2 or 3 languages during the day, the app will notice and suggest a reply in the same language as the conversation.",
+    onboarding_text_tertiary: "You can also check grammar, adjust tone of voice, and improve your text. Press Next to take a quick tour.",
+    onboarding_button_next: "Next",
+    onboarding_button_skip: "Skip",
+    onboarding_translate_title: "Translate",
+    onboarding_translate_text: "Choose the language, then copy the translation or replace the selected text right here.",
+    onboarding_translate_note: "If you reply in 2 or 3 languages during the day, the app will remember the correspondence language and suggest the right direction automatically.",
+    onboarding_translate_demo: "Hello, thanks for your message.",
+    onboarding_grammar_title: "Grammar",
+    onboarding_grammar_text: "This tab checks the grammar of the selected text and works with any language.",
+    onboarding_grammar_note: "Useful when the message is almost ready and you only want to fix mistakes quickly.",
+    onboarding_improve_title: "Improve",
+    onboarding_improve_text: "Use Improve when you want the text to sound clearer, more structured, and easier to read.",
+    onboarding_improve_note: "It is a good fit for emails, chats, and short drafts that need a cleaner version.",
+    onboarding_tone_title: "Tone",
+    onboarding_tone_text: "Tone helps adapt the same message to the situation: more friendly, more professional, or more direct.",
+    onboarding_tone_note: "Choose the context you want and the app will rewrite the wording for that style.",
+    onboarding_button_done: "Finish",
+    language_prompt_title: "Choose your default reply language",
+    language_prompt_text: "We will use this as the preferred language when the app suggests translating your reply back.",
+    language_prompt_save: "Save and continue",
+    language_prompt_later: "Maybe later",
     auto_to_russian: "",
     auto_to_preferred: ""
   },
@@ -110,9 +152,9 @@ const UI_STRINGS = {
     feedback_placeholder: "Cuentanos que falta o que dificulta usar la extension",
     send_feedback: "Enviar feedback",
     close: "Cerrar",
-    model_help: "Esta es la eleccion del modelo. Mini suele responder mas rapido, pero cuesta unas 5 veces mas por limites de tokens.",
-    language_help: "Elige aqui tu idioma principal de correspondencia. El texto en ruso sugerira ese idioma y otros idiomas sugeriran ruso.",
-    model_buy_next: "El onboarding de creditos sera el siguiente paso.",
+    preferred_badge: "preferido",
+    language_help: "Elige aqui tu idioma principal de correspondencia. El texto en tu idioma sugerira el idioma de la conversacion, y el texto en el idioma de la conversacion sugerira tu idioma.",
+    model_buy_next: "El onboarding de creditos sera el siguiente paso. En esta simulacion local de compra, el limite gratuito de hoy se restablecio y la app vuelve a estar disponible.",
     provider_next: "El onboarding del proveedor de IA sera el siguiente paso.",
     feedback_saved: "Gracias, tu feedback se guardo. Luego conectaremos el envio.",
     no_text: "No hay texto seleccionado.",
@@ -147,9 +189,9 @@ const UI_STRINGS = {
     feedback_placeholder: "Sag uns, was fehlt oder was die Nutzung erschwert",
     send_feedback: "Feedback senden",
     close: "Schliessen",
-    model_help: "Das ist die Modellauswahl. Mini antwortet meist schneller, kostet aber etwa 5x mehr nach Token-Limits.",
-    language_help: "Wahle hier deine Hauptsprache fur Korrespondenz. Russischer Text schlagt diese Sprache vor, andere Sprachen schlagen Russisch vor.",
-    model_buy_next: "Das Credits-Onboarding ist der nachste Schritt.",
+    preferred_badge: "bevorzugt",
+    language_help: "Wahle hier deine Hauptsprache fur Korrespondenz. Text in deiner Sprache schlagt die Gesprachssprache vor, und Text in der Gesprachssprache schlagt deine Sprache vor.",
+    model_buy_next: "Das Credits-Onboarding ist der nachste Schritt. In dieser lokalen Kaufsimulation wurde das heutige Freikontingent zuruckgesetzt und die App ist wieder verfugbar.",
     provider_next: "Das Onboarding fur KI-Anbieter ist der nachste Schritt.",
     feedback_saved: "Danke, dein Feedback wurde gespeichert. Als Nachstes verbinden wir den Versand.",
     no_text: "Kein Text ausgewahlt.",
@@ -184,9 +226,9 @@ const UI_STRINGS = {
     feedback_placeholder: "Dites-nous ce qui manque ou ce qui rend l'extension difficile a utiliser",
     send_feedback: "Envoyer le retour",
     close: "Fermer",
-    model_help: "Ceci est le choix du modele. Mini repond generalement plus vite, mais coute environ 5x plus selon les limites de tokens.",
-    language_help: "Choisissez ici votre langue principale de correspondance. Le texte russe suggerera cette langue, et les autres langues suggereront le russe.",
-    model_buy_next: "L'onboarding des credits sera la prochaine etape.",
+    preferred_badge: "prefere",
+    language_help: "Choisissez ici votre langue principale de correspondance. Un texte dans votre langue suggerera la langue de la conversation, et un texte dans la langue de la conversation suggerera votre langue.",
+    model_buy_next: "L'onboarding des credits sera la prochaine etape. Dans cette simulation locale d'achat, la limite gratuite du jour a ete reinitialisee et l'app est de nouveau disponible.",
     provider_next: "L'onboarding du fournisseur IA sera la prochaine etape.",
     feedback_saved: "Merci, votre retour a ete enregistre. Nous connecterons ensuite l'envoi.",
     no_text: "Aucun texte selectionne.",
@@ -221,9 +263,9 @@ const UI_STRINGS = {
     feedback_placeholder: "Conte o que esta faltando ou o que dificulta usar a extensao",
     send_feedback: "Enviar feedback",
     close: "Fechar",
-    model_help: "Esta e a escolha do modelo. Mini geralmente responde mais rapido, mas custa cerca de 5x mais nos limites de tokens.",
-    language_help: "Escolha aqui seu idioma principal de correspondencia. Texto em russo sugerira esse idioma, e outros idiomas sugerirao russo.",
-    model_buy_next: "O onboarding de creditos sera o proximo passo.",
+    preferred_badge: "preferido",
+    language_help: "Escolha aqui seu idioma principal de correspondencia. Texto no seu idioma sugerira o idioma da conversa, e texto no idioma da conversa sugerira o seu idioma.",
+    model_buy_next: "O onboarding de creditos sera o proximo passo. Nesta simulacao local de compra, o limite gratuito de hoje foi redefinido e o app esta disponivel novamente.",
     provider_next: "O onboarding do provedor de IA sera o proximo passo.",
     feedback_saved: "Obrigado, seu feedback foi salvo. Depois vamos conectar o envio.",
     no_text: "Nenhum texto selecionado.",
@@ -258,9 +300,9 @@ const UI_STRINGS = {
     feedback_placeholder: "足りない点や使いにくい点を教えてください",
     send_feedback: "フィードバックを送信",
     close: "閉じる",
-    model_help: "これはモデルの選択です。Mini は通常より速く応答しますが、トークン上限の消費は約 5 倍です。",
-    language_help: "ここで主にやり取りする言語を選びます。ロシア語のテキストではその言語が提案され、それ以外の言語ではロシア語が提案されます。",
-    model_buy_next: "クレジット購入のオンボーディングは次のステップです。",
+    preferred_badge: "推奨",
+    language_help: "ここで主にやり取りする言語を選びます。あなたの言語のテキストでは会話相手の言語が提案され、会話相手の言語のテキストではあなたの言語が提案されます。",
+    model_buy_next: "クレジット購入のオンボーディングは次のステップです。このローカル購入シミュレーションでは、本日の無料上限がリセットされ、アプリを再び利用できます。",
     provider_next: "AIプロバイダー接続のオンボーディングは次のステップです。",
     feedback_saved: "ありがとうございます。フィードバックを保存しました。次に送信連携を追加します。",
     no_text: "テキストが選択されていません。",
@@ -295,9 +337,9 @@ const UI_STRINGS = {
     feedback_placeholder: "무엇이 부족한지 또는 무엇이 사용을 어렵게 하는지 알려주세요",
     send_feedback: "피드백 보내기",
     close: "닫기",
-    model_help: "이것은 모델 선택입니다. Mini는 보통 더 빠르게 응답하지만 토큰 한도 기준으로 약 5배 더 비쌉니다.",
-    language_help: "여기에서 주요 대화 언어를 선택하세요. 러시아어 텍스트는 그 언어를 추천하고, 다른 언어 텍스트는 러시아어를 추천합니다.",
-    model_buy_next: "크레딧 온보딩은 다음 단계로 추가됩니다.",
+    preferred_badge: "선호",
+    language_help: "여기에서 주요 대화 언어를 선택하세요. 내 언어의 텍스트는 대화 언어를 추천하고, 대화 언어의 텍스트는 내 언어를 추천합니다.",
+    model_buy_next: "크레딧 온보딩은 다음 단계로 추가됩니다. 이 로컬 구매 시뮬레이션에서는 오늘의 무료 한도가 초기화되어 앱을 다시 사용할 수 있습니다.",
     provider_next: "AI 제공업체 온보딩은 다음 단계로 추가됩니다.",
     feedback_saved: "감사합니다. 피드백이 저장되었습니다. 다음으로 전송 기능을 연결하겠습니다.",
     no_text: "선택된 텍스트가 없습니다.",
@@ -332,9 +374,9 @@ const UI_STRINGS = {
     feedback_placeholder: "告诉我们缺少什么，或者是什么让扩展难以使用",
     send_feedback: "发送反馈",
     close: "关闭",
-    model_help: "这是模型选择。Mini 通常响应更快，但按 token 限额计算大约贵 5 倍。",
-    language_help: "在这里选择你的主要沟通语言。俄语文本会建议该语言，其他语言文本会建议俄语。",
-    model_buy_next: "购买额度的引导将是下一步。",
+    preferred_badge: "首选",
+    language_help: "在这里选择你的主要沟通语言。你的语言文本会建议对话语言，对话语言文本会建议你的语言。",
+    model_buy_next: "购买额度的引导将是下一步。在本地购买模拟中，今天的免费额度已重置，应用现在可以继续使用。",
     provider_next: "连接 AI 提供商的引导将是下一步。",
     feedback_saved: "谢谢，你的反馈已保存。下一步我们会接入发送功能。",
     no_text: "没有选中文本。",
@@ -369,9 +411,9 @@ const UI_STRINGS = {
     feedback_placeholder: "Расскажите, чего не хватает или что мешает пользоваться расширением",
     send_feedback: "Отправить фидбек",
     close: "Закрыть",
-    model_help: "Это выбор модели. Mini обычно отвечает быстрее, но примерно в 5 раз дороже по токенным лимитам.",
-    language_help: "Здесь выбери основной язык переписки. Для русского текста будет предлагаться этот язык, а для других языков будет предлагаться русский.",
-    model_buy_next: "Онбординг покупки лимитов будет следующим шагом.",
+    preferred_badge: "предпочтительный",
+    language_help: "Здесь выбери основной язык переписки. Для текста на твоем языке будет предлагаться язык переписки, а для текста на языке переписки будет предлагаться твой язык.",
+    model_buy_next: "Онбординг покупки лимитов будет следующим шагом. В этой локальной эмуляции покупки дневной лимит сброшен, и приложение снова доступно.",
     provider_next: "Онбординг подключения AI-провайдера будет следующим шагом.",
     feedback_saved: "Спасибо, фидбек сохранен. Дальше подключим отправку.",
     no_text: "Текст не выбран.",
@@ -385,6 +427,31 @@ const UI_STRINGS = {
     ready: "",
     done_page: "Готово. Проверь результат ниже и при необходимости скопируй его.",
     done_editable: "Готово. Проверь результат ниже и нажми «Заменить текст», если все в порядке.",
+    onboarding_badge: "Первый вход",
+    onboarding_title: "Привет!",
+    onboarding_text: "Это приложение поможет вам переводить текст прямо в браузере, не переключая контекст.",
+    onboarding_text_secondary: "Если вы ведете переписку на 2-3 языках в течение дня, приложение это поймет и предложит перевести ваш ответ на язык переписки.",
+    onboarding_text_tertiary: "Вы также можете проверять грамматику, менять tone of voice и улучшать ваш текст. Нажми «Далее», чтобы быстро ознакомиться с приложением.",
+    onboarding_button_next: "Далее",
+    onboarding_button_skip: "Пропустить",
+    onboarding_translate_title: "Перевести",
+    onboarding_translate_text: "Здесь можно менять язык перевода, а затем копировать результат или сразу вставлять его вместо исходного текста.",
+    onboarding_translate_note: "Если вы ведете переписку на 2-3 языках в течение дня, приложение поймет это и предложит перевести ваш ответ на язык переписки.",
+    onboarding_translate_demo: "Привет, спасибо за твое сообщение.",
+    onboarding_grammar_title: "Grammar",
+    onboarding_grammar_text: "Эта вкладка помогает проверить грамматику написанного текста и работает с любым языком.",
+    onboarding_grammar_note: "Подходит, когда мысль уже сформулирована, но хочется быстро убрать ошибки и сделать текст аккуратнее.",
+    onboarding_improve_title: "Improve",
+    onboarding_improve_text: "Помогает улучшить текст, если вы хотите сделать его более структурным, читабельным и ясным.",
+    onboarding_improve_note: "Полезно для писем, ответов в мессенджерах и черновиков, которые хочется быстро усилить.",
+    onboarding_tone_title: "Tone",
+    onboarding_tone_text: "Позволяет менять тон текста под разные контексты общения: более дружелюбный, профессиональный и так далее.",
+    onboarding_tone_note: "Выберите нужный стиль, и приложение перепишет формулировки под этот формат общения.",
+    onboarding_button_done: "Завершить",
+    language_prompt_title: "Выберите язык перевода по умолчанию",
+    language_prompt_text: "Мы будем использовать его как предпочтительный язык, когда приложение подсказывает перевести ваш ответ обратно.",
+    language_prompt_save: "Сохранить и продолжить",
+    language_prompt_later: "Позже",
     auto_to_russian: "",
     auto_to_preferred: ""
   },
@@ -406,9 +473,9 @@ const UI_STRINGS = {
     feedback_placeholder: "Розкажіть, чого бракує або що заважає користуватися розширенням",
     send_feedback: "Надіслати фідбек",
     close: "Закрити",
-    model_help: "Це вибір моделі. Mini зазвичай відповідає швидше, але приблизно у 5 разів дорожча за токенними лімітами.",
-    language_help: "Тут обери основну мову листування. Для російського тексту буде пропонуватися ця мова, а для інших мов буде пропонуватися російська.",
-    model_buy_next: "Онбординг покупки лімітів буде наступним кроком.",
+    preferred_badge: "пріоритетний",
+    language_help: "Тут обери основну мову листування. Для тексту твоєю мовою пропонуватиметься мова листування, а для тексту мовою листування пропонуватиметься твоя мова.",
+    model_buy_next: "Онбординг покупки лімітів буде наступним кроком. У цій локальній емуляції покупки денний ліміт скинуто, і застосунок знову доступний.",
     provider_next: "Онбординг підключення AI-провайдера буде наступним кроком.",
     feedback_saved: "Дякуємо, фідбек збережено. Далі підключимо відправку.",
     no_text: "Текст не вибрано.",
@@ -429,11 +496,17 @@ const UI_STRINGS = {
 
 const state = {
   selectedText: "",
+  replyDraft: "",
+  replyDraftMode: false,
+  replyDraftVisible: false,
+  replyDraftDirtySinceResult: false,
   transformedText: "",
+  resultSourceText: "",
   preferredTargetLanguage: DEFAULT_TARGET_LANGUAGE,
+  correspondenceLanguageByHost: {},
   targetLanguage: DEFAULT_TARGET_LANGUAGE,
+  hasManualTargetLanguageOverride: false,
   appLanguage: DEFAULT_APP_LANGUAGE,
-  modelTier: DEFAULT_MODEL_TIER,
   tone: DEFAULT_TONE,
   currentAction: null,
   hasResult: false,
@@ -442,12 +515,38 @@ const state = {
   inputSelectionStart: null,
   inputSelectionEnd: null,
   selectionKind: null,
-  status: "idle"
+  status: "idle",
+  isLoading: false,
+  shouldShowOnboarding: false,
+  onboardingStateLoaded: false,
+  onboardingStep: null,
+  hasLanguagePreference: false,
+  shouldShowLanguagePreferencePrompt: false,
+  pendingActionAfterLanguagePrompt: null,
+  activeTransformRequestId: null,
+  lastCompletedAction: null,
+  analyticsSessionId: crypto.randomUUID(),
+  transformStartedAt: 0,
+  firstStreamChunkAt: 0,
+  streamRenderText: "",
+  streamRenderBuffer: "",
+  streamRenderFrame: 0,
+  lastTransformMetrics: null
 }
 
 const PANEL_WIDTH = 360
+const PANEL_HEIGHT = 360
+const ONBOARDING_PANEL_WIDTH = 520
+const ONBOARDING_PANEL_HEIGHT = 520
 const PANEL_MARGIN = 12
-const TRIGGER_GAP = 8
+const TRIGGER_GAP = 4
+const RESULT_MIN_HEIGHT = 110
+const RESULT_MAX_HEIGHT = 280
+const ONBOARDING_WALKTHROUGH_STEPS = ["translate", "grammar", "improve", "tone"]
+let lastPointerAnchorRect = null
+let lastPointerDownPoint = null
+let googleDocsSelectionIntentUntil = 0
+let lastShownTriggerRect = null
 
 function renderAppLanguageOptions() {
   return APP_UI_LANGUAGES.map((language) => {
@@ -506,13 +605,20 @@ function getCurrentAppLanguageConfig() {
 
 const trigger = document.createElement("button")
 trigger.id = "ai-writer-mvp-trigger"
-trigger.textContent = "AI edit"
+const iconOnlyUrl = chrome.runtime.getURL("assets/writemate-icon-only.png")
+const logoUrl = chrome.runtime.getURL("assets/writemate-logo.png")
+trigger.innerHTML = `
+  <img class="ai-writer-mvp-trigger-logo" src="${iconOnlyUrl}" alt="" />
+`
 
 const panel = document.createElement("div")
 panel.id = "ai-writer-mvp-panel"
 panel.innerHTML = `
   <div class="ai-writer-mvp-header">
-    <span class="ai-writer-mvp-title">AI Writing Tools</span>
+    <div class="ai-writer-mvp-brand">
+      <img class="ai-writer-mvp-brand-logo" src="${iconOnlyUrl}" alt="" />
+      <span class="ai-writer-mvp-brand-text">WriteMate <span class="ai-writer-mvp-brand-accent">AI</span></span>
+    </div>
     <div class="ai-writer-mvp-header-controls">
       <div class="ai-writer-mvp-app-language-picker">
         <button type="button" id="ai-writer-mvp-app-language-button" class="ai-writer-mvp-icon-button" aria-label="App language">
@@ -521,20 +627,6 @@ panel.innerHTML = `
         <div id="ai-writer-mvp-app-language-menu" class="ai-writer-mvp-app-language-menu" hidden>
           ${renderAppLanguageMenu()}
         </div>
-      </div>
-      <div class="ai-writer-mvp-inline-control ai-writer-mvp-inline-control-compact">
-        <select id="ai-writer-mvp-model" aria-label="Model choice">
-          <option value="nano">Nano</option>
-          <option value="mini">Mini</option>
-        </select>
-        <button
-          type="button"
-          class="ai-writer-mvp-info-button"
-          aria-label="Model speed help"
-          data-help-target="model"
-        >
-          i
-        </button>
       </div>
       <button type="button" id="ai-writer-mvp-close" class="ai-writer-mvp-icon-button" aria-label="Close panel">×</button>
     </div>
@@ -557,10 +649,21 @@ panel.innerHTML = `
         aria-label="Translation language help"
         data-help-target="language"
       >
-        i
+        <svg class="ai-writer-mvp-info-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8"></circle>
+          <path d="M12 10.4v5.1"></path>
+          <path d="M12 7.8h.01"></path>
+        </svg>
       </button>
     </div>
-    <select id="ai-writer-mvp-language">${renderLanguageOptions()}</select>
+    <div class="ai-writer-mvp-select-wrap">
+      <select id="ai-writer-mvp-language">${renderLanguageOptions()}</select>
+      <span class="ai-writer-mvp-select-chevron" aria-hidden="true">
+        <svg viewBox="0 0 16 16">
+          <path d="M4 6l4 4 4-4"></path>
+        </svg>
+      </span>
+    </div>
     <div id="ai-writer-mvp-language-hint" class="ai-writer-mvp-language-hint"></div>
     </div>
   </div>
@@ -569,34 +672,58 @@ panel.innerHTML = `
       <div class="ai-writer-mvp-label-row">
         <label class="ai-writer-mvp-label" for="ai-writer-mvp-tone">Change tone to</label>
       </div>
-      <select id="ai-writer-mvp-tone">${renderToneOptions()}</select>
+      <div class="ai-writer-mvp-select-wrap">
+        <select id="ai-writer-mvp-tone">${renderToneOptions()}</select>
+        <span class="ai-writer-mvp-select-chevron" aria-hidden="true">
+          <svg viewBox="0 0 16 16">
+            <path d="M4 6l4 4 4-4"></path>
+          </svg>
+        </span>
+      </div>
     </div>
   </div>
   <div id="ai-writer-mvp-inline-tip" class="ai-writer-mvp-inline-tip" hidden></div>
   <div id="ai-writer-mvp-result-section" class="ai-writer-mvp-row">
-    <span class="ai-writer-mvp-label">Result</span>
     <div class="ai-writer-mvp-result-wrap">
       <textarea class="ai-writer-mvp-preview" id="ai-writer-mvp-preview" placeholder="Result will appear here"></textarea>
+      <div id="ai-writer-mvp-diff-preview" class="ai-writer-mvp-diff-preview" hidden></div>
+      <button type="button" id="ai-writer-mvp-preview-copy" class="ai-writer-mvp-field-copy" aria-label="Copy result" title="Copy result">
+        <svg class="ai-writer-mvp-field-copy-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 8h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z"></path>
+          <path d="M7 15H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"></path>
+        </svg>
+      </button>
       <div id="ai-writer-mvp-loader" class="ai-writer-mvp-loader" hidden>
-        <div class="ai-writer-mvp-pixel-stage">
-          <div class="ai-writer-mvp-pixel-dancer">
-            <span class="ai-writer-mvp-pixel-head"></span>
-            <span class="ai-writer-mvp-pixel-torso"></span>
-            <span class="ai-writer-mvp-pixel-arm ai-writer-mvp-pixel-arm-left"></span>
-            <span class="ai-writer-mvp-pixel-arm ai-writer-mvp-pixel-arm-right"></span>
-            <span class="ai-writer-mvp-pixel-leg ai-writer-mvp-pixel-leg-left"></span>
-            <span class="ai-writer-mvp-pixel-leg ai-writer-mvp-pixel-leg-right"></span>
-          </div>
-        </div>
-        <div class="ai-writer-mvp-loader-text">I'm already coming, yeah, baby.</div>
+        <div class="ai-writer-mvp-loader-spinner" aria-hidden="true"></div>
+        <div class="ai-writer-mvp-loader-text">Working on it...</div>
       </div>
+    </div>
+  </div>
+  <div id="ai-writer-mvp-reply-toggle-row" class="ai-writer-mvp-row" hidden>
+    <button type="button" id="ai-writer-mvp-reply-toggle" class="ai-writer-mvp-reply-toggle">Reply</button>
+  </div>
+  <div id="ai-writer-mvp-reply-draft-row" class="ai-writer-mvp-row" hidden>
+    <div class="ai-writer-mvp-label-row">
+      <label class="ai-writer-mvp-label" for="ai-writer-mvp-reply-draft">Reply draft</label>
+    </div>
+    <div class="ai-writer-mvp-reply-draft-wrap">
+      <textarea id="ai-writer-mvp-reply-draft" class="ai-writer-mvp-reply-draft" placeholder="Write your reply in your language"></textarea>
+      <button type="button" id="ai-writer-mvp-reply-copy" class="ai-writer-mvp-field-copy" aria-label="Copy reply draft" title="Copy reply draft">
+        <svg class="ai-writer-mvp-field-copy-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 8h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z"></path>
+          <path d="M7 15H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="ai-writer-mvp-reply-draft-actions">
+      <button type="button" id="ai-writer-mvp-reply-translate" class="ai-writer-mvp-reply-toggle">Translate</button>
     </div>
   </div>
   <div id="ai-writer-mvp-status" class="ai-writer-mvp-status"></div>
   <div id="ai-writer-mvp-footer" class="ai-writer-mvp-footer">
-    <button type="button" id="ai-writer-mvp-copy">Copy</button>
     <button type="button" id="ai-writer-mvp-apply">Replace text</button>
   </div>
+  <button type="button" id="ai-writer-mvp-feedback-fab" class="ai-writer-mvp-feedback-fab" aria-label="Leave feedback" title="Leave feedback" hidden>Leave feedback</button>
 `
 
 document.documentElement.append(trigger, panel)
@@ -606,6 +733,47 @@ helpPopover.id = "ai-writer-mvp-help-popover"
 helpPopover.className = "ai-writer-mvp-help-popover"
 helpPopover.hidden = true
 document.documentElement.append(helpPopover)
+
+const onboardingPopover = document.createElement("div")
+onboardingPopover.id = "ai-writer-mvp-onboarding-popover"
+onboardingPopover.className = "ai-writer-mvp-onboarding-popover"
+onboardingPopover.hidden = true
+onboardingPopover.innerHTML = `
+  <div id="ai-writer-mvp-onboarding-badge" class="ai-writer-mvp-onboarding-badge">First time here</div>
+  <h4 id="ai-writer-mvp-onboarding-guide-title" class="ai-writer-mvp-onboarding-guide-title">Translate</h4>
+  <p id="ai-writer-mvp-onboarding-guide-text" class="ai-writer-mvp-onboarding-guide-text"></p>
+  <p id="ai-writer-mvp-onboarding-guide-note" class="ai-writer-mvp-onboarding-guide-note"></p>
+  <p id="ai-writer-mvp-onboarding-guide-extra" class="ai-writer-mvp-onboarding-guide-note"></p>
+  <div class="ai-writer-mvp-onboarding-actions">
+    <button type="button" id="ai-writer-mvp-onboarding-guide-skip" class="ai-writer-mvp-onboarding-secondary">Skip</button>
+    <button type="button" id="ai-writer-mvp-onboarding-guide-next" class="ai-writer-mvp-onboarding-dismiss">Next</button>
+  </div>
+`
+document.documentElement.append(onboardingPopover)
+
+const languagePromptPopover = document.createElement("div")
+languagePromptPopover.id = "ai-writer-mvp-language-prompt-popover"
+languagePromptPopover.className = "ai-writer-mvp-onboarding-popover ai-writer-mvp-language-prompt-popover"
+languagePromptPopover.hidden = true
+languagePromptPopover.innerHTML = `
+  <h4 id="ai-writer-mvp-language-prompt-title" class="ai-writer-mvp-onboarding-guide-title">Choose your default reply language</h4>
+  <p id="ai-writer-mvp-language-prompt-text" class="ai-writer-mvp-onboarding-guide-note"></p>
+  <div class="ai-writer-mvp-onboarding-language-group">
+    <div class="ai-writer-mvp-select-wrap">
+      <select id="ai-writer-mvp-language-prompt-select">${renderLanguageOptions()}</select>
+      <span class="ai-writer-mvp-select-chevron" aria-hidden="true">
+        <svg viewBox="0 0 16 16">
+          <path d="M4 6l4 4 4-4"></path>
+        </svg>
+      </span>
+    </div>
+  </div>
+  <div class="ai-writer-mvp-onboarding-actions">
+    <button type="button" id="ai-writer-mvp-language-prompt-later" class="ai-writer-mvp-onboarding-secondary">Maybe later</button>
+    <button type="button" id="ai-writer-mvp-language-prompt-save" class="ai-writer-mvp-onboarding-dismiss">Save and continue</button>
+  </div>
+`
+document.documentElement.append(languagePromptPopover)
 
 const limitModal = document.createElement("div")
 limitModal.id = "ai-writer-mvp-limit-modal"
@@ -637,28 +805,47 @@ const languageSection = panel.querySelector("#ai-writer-mvp-language-section")
 const toneSelect = panel.querySelector("#ai-writer-mvp-tone")
 const toneRow = panel.querySelector("#ai-writer-mvp-tone-row")
 const toneSection = panel.querySelector("#ai-writer-mvp-tone-section")
+const replyToggleRow = panel.querySelector("#ai-writer-mvp-reply-toggle-row")
+const replyToggleButton = panel.querySelector("#ai-writer-mvp-reply-toggle")
+const replyDraftRow = panel.querySelector("#ai-writer-mvp-reply-draft-row")
+const replyDraftField = panel.querySelector("#ai-writer-mvp-reply-draft")
+const replyTranslateButton = panel.querySelector("#ai-writer-mvp-reply-translate")
 const appLanguageButton = panel.querySelector("#ai-writer-mvp-app-language-button")
 const appLanguageFlag = panel.querySelector("#ai-writer-mvp-app-language-flag")
 const appLanguageMenu = panel.querySelector("#ai-writer-mvp-app-language-menu")
 const appLanguageOptions = panel.querySelectorAll("[data-app-language]")
-const modelSelect = panel.querySelector("#ai-writer-mvp-model")
 const languageHint = panel.querySelector("#ai-writer-mvp-language-hint")
 const inlineTip = panel.querySelector("#ai-writer-mvp-inline-tip")
 const resultSection = panel.querySelector("#ai-writer-mvp-result-section")
 const previewField = panel.querySelector("#ai-writer-mvp-preview")
+const previewCopyButton = panel.querySelector("#ai-writer-mvp-preview-copy")
+const diffPreview = panel.querySelector("#ai-writer-mvp-diff-preview")
 const loader = panel.querySelector("#ai-writer-mvp-loader")
 const loaderText = panel.querySelector(".ai-writer-mvp-loader-text")
 const statusField = panel.querySelector("#ai-writer-mvp-status")
 const footer = panel.querySelector("#ai-writer-mvp-footer")
 const applyButton = panel.querySelector("#ai-writer-mvp-apply")
+const feedbackFabButton = panel.querySelector("#ai-writer-mvp-feedback-fab")
 const closeButton = panel.querySelector("#ai-writer-mvp-close")
-const copyButton = panel.querySelector("#ai-writer-mvp-copy")
+const replyDraftCopyButton = panel.querySelector("#ai-writer-mvp-reply-copy")
 const titleField = panel.querySelector(".ai-writer-mvp-title")
 const translateLabel = panel.querySelector("label[for='ai-writer-mvp-language']")
 const toneLabel = panel.querySelector("label[for='ai-writer-mvp-tone']")
-const resultLabel = panel.querySelector("#ai-writer-mvp-result-section .ai-writer-mvp-label")
+const onboardingBadge = onboardingPopover.querySelector("#ai-writer-mvp-onboarding-badge")
+const onboardingGuideTitle = onboardingPopover.querySelector("#ai-writer-mvp-onboarding-guide-title")
+const onboardingGuideText = onboardingPopover.querySelector("#ai-writer-mvp-onboarding-guide-text")
+const onboardingGuideNote = onboardingPopover.querySelector("#ai-writer-mvp-onboarding-guide-note")
+const onboardingGuideExtra = onboardingPopover.querySelector("#ai-writer-mvp-onboarding-guide-extra")
+const onboardingGuideNextButton = onboardingPopover.querySelector("#ai-writer-mvp-onboarding-guide-next")
+const onboardingGuideSkipButton = onboardingPopover.querySelector("#ai-writer-mvp-onboarding-guide-skip")
+const languagePromptTitle = languagePromptPopover.querySelector("#ai-writer-mvp-language-prompt-title")
+const languagePromptText = languagePromptPopover.querySelector("#ai-writer-mvp-language-prompt-text")
+const languagePromptSelect = languagePromptPopover.querySelector("#ai-writer-mvp-language-prompt-select")
+const languagePromptLaterButton = languagePromptPopover.querySelector("#ai-writer-mvp-language-prompt-later")
+const languagePromptSaveButton = languagePromptPopover.querySelector("#ai-writer-mvp-language-prompt-save")
 const limitText = limitModal.querySelector("#ai-writer-mvp-limit-text")
 const limitTitle = limitModal.querySelector("h3")
+const limitActions = limitModal.querySelector(".ai-writer-mvp-limit-actions")
 const buyCreditsButton = limitModal.querySelector("#ai-writer-mvp-buy-credits")
 const openFeedbackButton = limitModal.querySelector("#ai-writer-mvp-open-feedback")
 const buyBox = limitModal.querySelector("#ai-writer-mvp-buy-box")
@@ -671,8 +858,9 @@ const infoButtons = panel.querySelectorAll(".ai-writer-mvp-info-button")
 const actionButtons = panel.querySelectorAll("[data-action]")
 
 languageSelect.value = state.targetLanguage
-modelSelect.value = state.modelTier
 toneSelect.value = state.tone
+languagePromptSelect.value = state.preferredTargetLanguage
+refreshLanguageSelectOptions()
 applyTranslations()
 updateLanguageHint()
 updateTranslateSectionVisibility()
@@ -681,52 +869,166 @@ updateResultVisibility()
 setStatus("", false)
 void loadAppLanguagePreference()
 void loadLanguagePreference()
+void loadOnboardingState()
 
 document.addEventListener("mouseup", handleSelectionChange)
 document.addEventListener("keyup", handleSelectionChange)
-document.addEventListener("keydown", handleDebugShortcuts)
+document.addEventListener("selectionchange", handleSelectionChange)
+document.addEventListener("mousedown", handlePointerStart)
+if (IS_DEVELOPMENT_BUILD) {
+  document.addEventListener("keydown", handleDebugShortcuts)
+}
 document.addEventListener("mousedown", handleOutsideClick)
+chrome.runtime.onMessage.addListener(handleRuntimeMessage)
 window.addEventListener("resize", syncLimitModalToPanel)
+window.addEventListener("resize", syncOnboardingVisibility)
+window.addEventListener("resize", () => {
+  if (!languagePromptPopover.hidden) {
+    showLanguagePreferencePrompt()
+  }
+})
+trigger.addEventListener("mousedown", (event) => {
+  event.preventDefault()
+  preserveSelectionForTriggerClick()
+  if (state.selectionKind === "google-docs") {
+    void ensureGoogleDocsSelectionText()
+  }
+})
 trigger.addEventListener("click", openPanel)
 appLanguageButton.addEventListener("click", () => {
-  const nextHidden = !appLanguageMenu.hidden
-  appLanguageMenu.hidden = nextHidden
+  const nextOpen = appLanguageMenu.hidden
+  setAppLanguageMenuOpen(nextOpen)
 })
 appLanguageOptions.forEach((button) => {
   button.addEventListener("click", () => {
     state.appLanguage = button.getAttribute("data-app-language") || DEFAULT_APP_LANGUAGE
-    appLanguageMenu.hidden = true
-  saveAppLanguagePreference(state.appLanguage)
-  applyTranslations()
+    setAppLanguageMenuOpen(false)
+    saveAppLanguagePreference(state.appLanguage)
+    applyTranslations()
   })
-})
-modelSelect.addEventListener("change", () => {
-  state.modelTier = modelSelect.value
 })
 languageSelect.addEventListener("change", () => {
   state.targetLanguage = languageSelect.value
-  if (state.targetLanguage !== RUSSIAN_LANGUAGE) {
-    state.preferredTargetLanguage = state.targetLanguage
-    saveLanguagePreference(state.preferredTargetLanguage)
-  }
+  state.preferredTargetLanguage = state.targetLanguage
+  state.hasLanguagePreference = true
+  state.hasManualTargetLanguageOverride = true
+  saveLanguagePreference(state.preferredTargetLanguage)
+  refreshLanguageSelectOptions()
   updateLanguageHint()
+  if (state.currentAction === "translate" && hasTransformInput() && !state.isLoading) {
+    void requestTransform("translate")
+  }
 })
 toneSelect.addEventListener("change", () => {
   state.tone = toneSelect.value
+  if (state.currentAction === "tone" && hasTransformInput() && !state.isLoading) {
+    void requestTransform("tone")
+  }
+})
+replyDraftField.addEventListener("input", () => {
+  const nextDraft = replyDraftField.value
+  state.replyDraftMode = Boolean(nextDraft.trim())
+  state.replyDraftVisible = state.replyDraftVisible || state.replyDraftMode
+  if (nextDraft !== state.replyDraft) {
+    state.replyDraft = nextDraft
+    if (state.resultSourceText || state.transformedText) {
+      state.replyDraftDirtySinceResult = true
+    }
+  }
+  if (!state.hasManualTargetLanguageOverride && state.replyDraftMode) {
+    applySuggestedTargetLanguage()
+  }
+  updateActionAvailability()
+})
+replyToggleButton.addEventListener("click", () => {
+  state.replyDraftVisible = true
+  state.replyDraftMode = Boolean(getNormalizedReplyDraft())
+  if (!state.hasManualTargetLanguageOverride) {
+    const replyTargetLanguage = getReplyTargetLanguage()
+    if (replyTargetLanguage) {
+      state.targetLanguage = replyTargetLanguage
+      languageSelect.value = replyTargetLanguage
+    } else {
+      applySuggestedTargetLanguage()
+    }
+  }
+  updateReplyDraftVisibility()
+  replyDraftField.focus()
+})
+replyTranslateButton.addEventListener("click", () => {
+  state.replyDraftVisible = true
+  state.replyDraftMode = Boolean(getNormalizedReplyDraft())
+  if (!state.replyDraftMode || state.isLoading) {
+    return
+  }
+  state.currentAction = "translate"
+  void requestTransform("translate")
 })
 closeButton.addEventListener("click", hidePanel)
+feedbackFabButton.addEventListener("click", () => {
+  openFeedbackModal()
+})
+onboardingGuideNextButton.addEventListener("click", () => {
+  void handleOnboardingNext()
+})
+onboardingGuideSkipButton.addEventListener("click", () => {
+  void dismissOnboarding()
+})
+languagePromptSelect.addEventListener("change", () => {
+  state.targetLanguage = languagePromptSelect.value
+})
+languagePromptSaveButton.addEventListener("click", () => {
+  void saveLanguagePreferenceFromPrompt()
+})
+languagePromptLaterButton.addEventListener("click", () => {
+  void continueAfterLanguagePreferencePrompt(false)
+})
 applyButton.addEventListener("click", applyTransformedText)
-copyButton.addEventListener("click", () => {
-  void copyResult()
+previewCopyButton.addEventListener("click", () => {
+  void copyTextValue(previewField.value, "result_copied")
+})
+replyDraftCopyButton.addEventListener("click", () => {
+  void copyTextValue(getNormalizedReplyDraft(), "reply_draft_copied")
 })
 buyCreditsButton.addEventListener("click", () => {
+  void simulateLimitPurchase()
+})
+
+async function simulateLimitPurchase() {
   feedbackBox.hidden = true
   buyBox.hidden = false
   buyPlaceholder.textContent = t("model_buy_next")
   panel.classList.add("ai-writer-mvp-panel-limit-expanded")
   centerPanelInViewport()
   syncLimitModalToPanel()
-})
+
+  if (!IS_DEVELOPMENT_BUILD) {
+    void trackEvent("limit_purchase_interest_clicked", {
+      success: true,
+      properties: {
+        resetDailyUsage: false
+      }
+    })
+    return
+  }
+
+  try {
+    await chrome.storage.local.remove(DAILY_USAGE_STORAGE_KEY)
+    void trackEvent("limit_purchase_simulated", {
+      success: true,
+      properties: {
+        resetDailyUsage: true
+      }
+    })
+  } catch (error) {
+    void trackEvent("limit_purchase_simulated", {
+      success: false,
+      errorMessage: error instanceof Error ? error.message : "Daily limit reset failed."
+    })
+    setStatus("Purchase simulated, but the local limit could not be reset.", true)
+  }
+}
+
 openFeedbackButton.addEventListener("click", () => {
   buyBox.hidden = true
   feedbackBox.hidden = false
@@ -749,6 +1051,12 @@ sendFeedbackButton.addEventListener("click", async () => {
     feedbackBox.hidden = true
     hideLimitModal()
     setStatus(t("feedback_saved"), false)
+    void trackEvent("feedback_submitted", {
+      success: true,
+      properties: {
+        messageLength: message.length
+      }
+    })
   } catch {
     setStatus(t("feedback_failed"), true)
   } finally {
@@ -775,15 +1083,38 @@ actionButtons.forEach((button) => {
   button.addEventListener("click", () => {
     const action = button.getAttribute("data-action")
     state.currentAction = action
+    void trackEvent("action_clicked", {
+      action,
+      properties: {
+        targetLanguage: state.targetLanguage,
+        tone: state.tone
+      }
+    })
     updateTranslateSectionVisibility()
     updateToneSectionVisibility()
     updateInlineTip()
+    if (action === "translate" && shouldOpenLanguagePreferencePrompt()) {
+      openLanguagePreferencePrompt()
+      return
+    }
     void requestTransform(action)
   })
 })
 
-function handleSelectionChange() {
-  window.setTimeout(() => {
+function handleSelectionChange(event) {
+  if (event instanceof MouseEvent) {
+    lastPointerAnchorRect = new DOMRect(event.clientX, event.clientY, 1, 1)
+    if (
+      isGoogleDocsDocumentPage() &&
+      event.type === "mouseup" &&
+      didLikelyCreateGoogleDocsSelection(event)
+    ) {
+      googleDocsSelectionIntentUntil = Date.now() + 500
+    }
+  }
+
+  window.clearTimeout(handleSelectionChange.timeoutId)
+  handleSelectionChange.timeoutId = window.setTimeout(() => {
     const inputSelection = readInputSelection(document.activeElement)
     if (inputSelection) {
       rememberInputSelection(inputSelection)
@@ -805,44 +1136,141 @@ function handleSelectionChange() {
       return
     }
 
+    const googleDocsSelection = readGoogleDocsSelection()
+    if (googleDocsSelection) {
+      rememberPageSelection(googleDocsSelection)
+      showTriggerAtRect(googleDocsSelection.rect)
+      return
+    }
+
     if (panel.style.display === "block" && state.selectedText) {
+      return
+    }
+
+    if (isSelectionPreservedForTriggerClick()) {
       return
     }
 
     clearSelectionState()
     hideTrigger()
-  }, 10)
+  }, 30)
+}
+
+handleSelectionChange.timeoutId = 0
+handleSelectionChange.preserveUntil = 0
+
+function handlePointerStart(event) {
+  if (!(event instanceof MouseEvent)) {
+    return
+  }
+
+  lastPointerDownPoint = {
+    x: event.clientX,
+    y: event.clientY
+  }
+}
+
+function didLikelyCreateGoogleDocsSelection(event) {
+  if (!(event instanceof MouseEvent)) {
+    return false
+  }
+
+  if (event.detail >= 2) {
+    return true
+  }
+
+  if (!lastPointerDownPoint) {
+    return false
+  }
+
+  const deltaX = event.clientX - lastPointerDownPoint.x
+  const deltaY = event.clientY - lastPointerDownPoint.y
+  const dragDistance = Math.hypot(deltaX, deltaY)
+
+  return dragDistance >= 6
+}
+
+function preserveSelectionForTriggerClick() {
+  handleSelectionChange.preserveUntil = Date.now() + 300
+}
+
+function isSelectionPreservedForTriggerClick() {
+  return Date.now() < handleSelectionChange.preserveUntil
 }
 
 function handleDebugShortcuts(event) {
-  if (event.metaKey && event.shiftKey && event.key.toLowerCase() === "l") {
+  const hasDebugModifier = (event.metaKey || event.ctrlKey) && event.shiftKey
+  const pressedKey = event.key.toLowerCase()
+
+  if (hasDebugModifier && pressedKey === "l") {
     event.preventDefault()
     openLimitPreview()
     return
   }
 
-  if (event.metaKey && event.shiftKey && event.key === "0") {
+  if (hasDebugModifier && pressedKey === "8") {
+    event.preventDefault()
+    void resetOnboardingPreview()
+    return
+  }
+
+  if (hasDebugModifier && pressedKey === "9") {
+    event.preventDefault()
+    void resetTextFlowPreview()
+    return
+  }
+
+  if (hasDebugModifier && pressedKey === "0") {
     event.preventDefault()
     void resetDailyLimit()
   }
 }
 
-function openPanel() {
+async function openPanel() {
+  handleSelectionChange.preserveUntil = 0
+  if (state.selectionKind === "google-docs") {
+    await ensureGoogleDocsSelectionText()
+  }
+
+  if (!state.selectedText) {
+    const didRecoverText = await ensureGoogleDocsSelectionText()
+    if (!didRecoverText) {
+      return
+    }
+  }
+
   if (!state.selectedText) {
     return
   }
 
-  const triggerRect = trigger.getBoundingClientRect()
+  await ensureOnboardingStateLoaded()
+
+  const triggerRect = lastShownTriggerRect || trigger.getBoundingClientRect()
   panel.style.display = "block"
-  positionPanel(triggerRect)
-  previewField.value = state.transformedText || state.selectedText
+  replyDraftField.value = state.replyDraft
+  previewField.value = state.shouldShowOnboarding ? "" : (state.transformedText || state.selectedText)
+  updateResultPreview()
+  syncResultViewport()
   updateTranslateSectionVisibility()
   updateToneSectionVisibility()
+  updateReplyDraftVisibility()
   updateInlineTip()
   updateResultVisibility()
   updateActionAvailability()
+  if (state.shouldShowOnboarding) {
+    centerPanelInViewport()
+  } else {
+    positionPanel(triggerRect)
+  }
+  syncOnboardingVisibility()
   ensurePanelInViewport()
   setStatus("", false)
+  void trackEvent("panel_opened", {
+    properties: {
+      selectedTextLength: state.selectedText.length,
+      hasExistingResult: state.hasResult
+    }
+  })
 }
 
 function openLimitPreview() {
@@ -852,6 +1280,7 @@ function openLimitPreview() {
   state.hasResult = false
   updateTranslateSectionVisibility()
   updateToneSectionVisibility()
+  updateReplyDraftVisibility()
   updateInlineTip()
   updateResultVisibility()
   showLimitModal({
@@ -861,21 +1290,280 @@ function openLimitPreview() {
 }
 
 function hideTrigger() {
+  googleDocsSelectionIntentUntil = 0
+  lastShownTriggerRect = null
   trigger.style.display = "none"
+}
+
+function isGoogleDocsDocumentPage() {
+  const referrer = document.referrer || ""
+  const isDocsReferrer = referrer.startsWith(`https://${GOOGLE_DOCS_HOST}${GOOGLE_DOCS_DOCUMENT_PATH_PREFIX}`)
+
+  return (
+    (
+      window.location.hostname === GOOGLE_DOCS_HOST &&
+      window.location.pathname.startsWith(GOOGLE_DOCS_DOCUMENT_PATH_PREFIX)
+    ) ||
+    isDocsReferrer
+  )
+}
+
+function getGoogleDocsFallbackRect() {
+  if (!isGoogleDocsDocumentPage()) {
+    return null
+  }
+
+  return lastPointerAnchorRect
+}
+
+function getGoogleDocsSelectionRect() {
+  if (!isGoogleDocsDocumentPage()) {
+    return null
+  }
+
+  const rects = GOOGLE_DOCS_SELECTION_SELECTORS
+    .flatMap((selector) => Array.from(document.querySelectorAll(selector)))
+    .filter((element) => element instanceof HTMLElement)
+    .flatMap((element) => Array.from(element.getClientRects()))
+    .filter((rect) => rect.width || rect.height)
+
+  if (!rects.length) {
+    return null
+  }
+
+  const sortedRects = rects.slice().sort((left, right) => {
+    if (Math.abs(left.bottom - right.bottom) > 1) {
+      return left.bottom - right.bottom
+    }
+
+    return left.right - right.right
+  })
+
+  return sortedRects[sortedRects.length - 1]
+}
+
+function getGoogleDocsSelectionText() {
+  const directSelectionText = String(window.getSelection?.()?.toString?.() || "").trim()
+  if (directSelectionText) {
+    return directSelectionText
+  }
+
+  const textEventIframe = document.querySelector(".docs-texteventtarget-iframe")
+  const iframeDocument = textEventIframe instanceof HTMLIFrameElement ? textEventIframe.contentDocument : null
+  const iframeActiveElement = iframeDocument?.activeElement || null
+  const iframeSelectionText = String(iframeDocument?.getSelection?.()?.toString?.() || "").trim()
+  if (iframeSelectionText) {
+    return iframeSelectionText
+  }
+
+  if (
+    iframeActiveElement instanceof HTMLTextAreaElement ||
+    (iframeActiveElement instanceof HTMLInputElement && supportsTextSelection(iframeActiveElement))
+  ) {
+    const start = iframeActiveElement.selectionStart
+    const end = iframeActiveElement.selectionEnd
+
+    if (start != null && end != null && end > start) {
+      return String(iframeActiveElement.value.slice(start, end)).trim()
+    }
+  }
+
+  const editableInIframe = iframeDocument?.querySelector("[contenteditable='true'], [contenteditable='plaintext-only'], textarea, input")
+  if (
+    editableInIframe instanceof HTMLTextAreaElement ||
+    (editableInIframe instanceof HTMLInputElement && supportsTextSelection(editableInIframe))
+  ) {
+    const start = editableInIframe.selectionStart
+    const end = editableInIframe.selectionEnd
+
+    if (start != null && end != null && end > start) {
+      return String(editableInIframe.value.slice(start, end)).trim()
+    }
+  }
+
+  if (editableInIframe instanceof HTMLElement && editableInIframe.isContentEditable) {
+    const editableText = String(editableInIframe.ownerDocument?.getSelection?.()?.toString?.() || editableInIframe.textContent || "").trim()
+    if (editableText) {
+      return editableText
+    }
+  }
+
+  return ""
+}
+
+function readGoogleDocsSelection() {
+  const selectedText = getGoogleDocsSelectionText()
+  const hasRecentSelectionIntent = Date.now() < googleDocsSelectionIntentUntil
+  const rect = getGoogleDocsSelectionRect() || ((selectedText || hasRecentSelectionIntent) ? getGoogleDocsFallbackRect() : null)
+  if (!rect || (!rect.width && !rect.height)) {
+    return null
+  }
+
+  return {
+    kind: "google-docs",
+    activeElement: null,
+    selectedText,
+    range: null,
+    rect
+  }
+}
+
+async function ensureGoogleDocsSelectionText() {
+  if (state.selectionKind !== "google-docs") {
+    return false
+  }
+
+  state.selectedText = state.selectedText.trim() || getGoogleDocsSelectionText()
+
+  if (state.selectedText.trim()) {
+    return true
+  }
+
+  const recoveredText = await recoverGoogleDocsSelectionText()
+  if (!recoveredText) {
+    setStatus(t("no_text"), true)
+    return false
+  }
+
+  state.selectedText = recoveredText
+  return true
+}
+
+async function recoverGoogleDocsSelectionText() {
+  const eventCapturedText = await captureGoogleDocsCopyEventText()
+  if (eventCapturedText) {
+    return eventCapturedText
+  }
+
+  let previousClipboardText = null
+
+  try {
+    previousClipboardText = await navigator.clipboard.readText()
+  } catch {
+    previousClipboardText = null
+  }
+
+  let didCopy = false
+  try {
+    didCopy = Boolean(document.execCommand?.("copy"))
+  } catch {
+    didCopy = false
+  }
+
+  if (!didCopy) {
+    return ""
+  }
+
+  await new Promise((resolve) => window.setTimeout(resolve, 40))
+
+  let copiedText = ""
+  try {
+    copiedText = await navigator.clipboard.readText()
+  } catch {
+    copiedText = ""
+  }
+
+  if (
+    previousClipboardText != null &&
+    copiedText &&
+    copiedText !== previousClipboardText
+  ) {
+    void navigator.clipboard.writeText(previousClipboardText).catch(() => {})
+  }
+
+  return copiedText.trim()
+}
+
+async function captureGoogleDocsCopyEventText() {
+  const textEventIframe = document.querySelector(".docs-texteventtarget-iframe")
+  const iframeDocument = textEventIframe instanceof HTMLIFrameElement ? textEventIframe.contentDocument : null
+  const candidateDocuments = [document, iframeDocument].filter(Boolean)
+
+  let capturedText = ""
+  let cleanup = null
+
+  try {
+    const capturePromise = new Promise((resolve) => {
+      const timeoutId = window.setTimeout(() => {
+        resolve("")
+      }, 120)
+
+      const handleCopy = (event) => {
+        const nextText = String(event.clipboardData?.getData("text/plain") || "").trim()
+        if (nextText) {
+          capturedText = nextText
+          window.clearTimeout(timeoutId)
+          resolve(nextText)
+        }
+      }
+
+      candidateDocuments.forEach((candidateDocument) => {
+        candidateDocument.addEventListener("copy", handleCopy, true)
+        candidateDocument.addEventListener("copy", handleCopy, false)
+      })
+
+      cleanup = () => {
+        window.clearTimeout(timeoutId)
+        candidateDocuments.forEach((candidateDocument) => {
+          candidateDocument.removeEventListener("copy", handleCopy, true)
+          candidateDocument.removeEventListener("copy", handleCopy, false)
+        })
+      }
+    })
+
+    try {
+      if (iframeDocument?.execCommand) {
+        iframeDocument.execCommand("copy")
+      } else {
+        document.execCommand?.("copy")
+      }
+    } catch {
+      // Fall through to clipboard-based recovery below.
+    }
+
+    const resolvedText = await capturePromise
+    return String(resolvedText || capturedText).trim()
+  } finally {
+    cleanup?.()
+  }
+}
+
+function resolveSelectionRect(range) {
+  const directRect = getSelectionAnchorRect(range)
+  if (directRect && (directRect.width || directRect.height)) {
+    return directRect
+  }
+
+  return getGoogleDocsFallbackRect()
 }
 
 function hidePanel() {
   hideHelpPopover()
   hideLimitModal()
-  appLanguageMenu.hidden = true
+  hideOnboardingPopover()
+  hideLanguagePreferencePrompt()
+  setAppLanguageMenuOpen(false)
+  state.replyDraft = ""
+  state.replyDraftMode = false
+  state.replyDraftVisible = false
+  state.replyDraftDirtySinceResult = false
+  replyDraftField.value = ""
+  updateReplyDraftVisibility()
   panel.style.display = "none"
+  syncOnboardingVisibility()
   updateActionAvailability()
 }
 
 function handleOutsideClick(event) {
   const target = event.target
 
-  if (panel.contains(target) || trigger.contains(target) || limitModal.contains(target)) {
+  if (
+    panel.contains(target) ||
+    trigger.contains(target) ||
+    limitModal.contains(target) ||
+    onboardingPopover.contains(target) ||
+    languagePromptPopover.contains(target)
+  ) {
     return
   }
 
@@ -883,14 +1571,34 @@ function handleOutsideClick(event) {
   hidePanel()
 }
 
+function setAppLanguageMenuOpen(isOpen) {
+  appLanguageMenu.hidden = !isOpen
+  panel.classList.toggle("ai-writer-mvp-panel-language-open", isOpen)
+  if (isOpen) {
+    centerPanelInViewport()
+  }
+  ensurePanelInViewport()
+}
+
 async function requestTransform(action) {
-  if (!state.selectedText) {
+  const inputText = getTransformInputText(action)
+
+  if (!inputText) {
     setStatus(t("no_text"), true)
     return
   }
 
+  const requestId = crypto.randomUUID()
   previewField.value = ""
+  state.transformedText = ""
+  resetStreamRenderingState()
   state.hasResult = false
+  state.currentAction = action
+  state.activeTransformRequestId = requestId
+  state.transformStartedAt = performance.now()
+  state.firstStreamChunkAt = 0
+  state.lastTransformMetrics = null
+  setLoaderMessage(action)
   setLoading(true)
   setStatus("", false)
 
@@ -898,41 +1606,120 @@ async function requestTransform(action) {
     {
       type: "AI_TRANSFORM",
       payload: {
+        requestId,
+        sessionId: state.analyticsSessionId,
         action,
-        text: state.selectedText,
+        text: inputText,
         targetLanguage: state.targetLanguage,
         tone: state.tone,
-        modelTier: state.modelTier
+        selectionKind: state.selectionKind,
+        pageHost: window.location.hostname || ""
       }
     },
     (response) => {
-      setLoading(false)
-
       if (chrome.runtime.lastError) {
+        if (state.activeTransformRequestId === requestId) {
+          state.activeTransformRequestId = null
+          setLoading(false)
+        }
+        void trackEvent("transform_failed_client", {
+          action,
+          success: false,
+          errorMessage: chrome.runtime.lastError.message,
+          properties: {
+            requestId
+          }
+        })
         setStatus(chrome.runtime.lastError.message, true)
         return
       }
 
+      if (state.activeTransformRequestId !== requestId) {
+        return
+      }
+
+      setLoading(false)
+
       if (!response?.ok) {
+        state.activeTransformRequestId = null
+
         if (response?.code === "DAILY_LIMIT_REACHED") {
           showLimitModal(response?.details)
           setStatus("", false)
           return
         }
 
+        void trackEvent("transform_failed_client", {
+          action,
+          success: false,
+          errorCode: response?.code,
+          errorMessage: response?.error || "Request failed.",
+          properties: {
+            requestId
+          }
+        })
         setStatus(response?.error || "Request failed.", true)
         return
       }
 
+      flushStreamRenderBuffer()
       state.transformedText = response.result.text
+      state.resultSourceText = inputText
+      state.replyDraftDirtySinceResult = false
       syncCorrespondenceLanguage(action, response.result)
       state.hasResult = true
-      previewField.value = state.transformedText
+      state.activeTransformRequestId = null
+      state.lastCompletedAction = action
+      state.lastTransformMetrics = buildClientTransformMetrics(response.result.metrics)
+      renderCompletedTransformText(state.transformedText)
+      updateResultPreview()
+      syncResultViewport()
       updateResultVisibility()
       updateActionAvailability()
+      logTransformMetrics(state.lastTransformMetrics)
+      void trackEvent("transform_rendered", {
+        action,
+        success: true,
+        durationMs: state.lastTransformMetrics?.totalMs,
+        properties: {
+          requestId,
+          resultLength: state.transformedText.length,
+          metrics: state.lastTransformMetrics
+        }
+      })
       setStatus(getResultMessage(), false)
     }
   )
+}
+
+function getTransformInputText(action) {
+  const normalizedReplyDraft = getNormalizedReplyDraft()
+
+  if (state.replyDraftMode && state.replyDraftDirtySinceResult && normalizedReplyDraft) {
+    return normalizedReplyDraft
+  }
+
+  if (action === state.lastCompletedAction && state.resultSourceText) {
+    return state.resultSourceText
+  }
+
+  if (state.hasResult && state.transformedText) {
+    return state.transformedText
+  }
+
+  if (state.replyDraftMode && normalizedReplyDraft) {
+    return normalizedReplyDraft
+  }
+
+  return state.selectedText
+}
+
+function getNormalizedReplyDraft() {
+  return String(state.replyDraft || "").trim()
+}
+
+function hasTransformInput() {
+  return Boolean(getTransformInputText(state.currentAction || "translate"))
 }
 
 function applyTransformedText() {
@@ -1065,12 +1852,11 @@ function setStatus(message, isError) {
 }
 
 function setLoading(isLoading) {
-  loader.hidden = !isLoading
-  previewField.classList.toggle("ai-writer-mvp-preview-loading", isLoading)
+  state.isLoading = isLoading
+  syncLoadingPresentation()
   actionButtons.forEach((button) => {
     button.disabled = isLoading
   })
-  modelSelect.disabled = isLoading
   languageSelect.disabled = isLoading
   toneSelect.disabled = isLoading
   closeButton.disabled = isLoading
@@ -1079,19 +1865,163 @@ function setLoading(isLoading) {
   ensurePanelInViewport()
 }
 
+function handleRuntimeMessage(message) {
+  if (message?.type !== "AI_TRANSFORM_DELTA") {
+    return false
+  }
+
+  if (!message.requestId || message.requestId !== state.activeTransformRequestId) {
+    return false
+  }
+
+  if (typeof message.delta !== "string" || !message.delta) {
+    return false
+  }
+
+  if (!state.firstStreamChunkAt) {
+    state.firstStreamChunkAt = performance.now()
+  }
+
+  const nextText = getAppendableStreamText(message.delta)
+  if (!nextText) {
+    return false
+  }
+
+  state.transformedText += nextText
+  state.hasResult = true
+  queueStreamPreviewAppend(nextText)
+  return false
+}
+
+function getAppendableStreamText(delta) {
+  if (!state.transformedText || !delta.startsWith(state.transformedText)) {
+    return delta
+  }
+
+  return delta.slice(state.transformedText.length)
+}
+
+function queueStreamPreviewAppend(text) {
+  state.streamRenderBuffer += text
+
+  if (state.streamRenderFrame) {
+    return
+  }
+
+  state.streamRenderFrame = window.requestAnimationFrame(() => {
+    flushStreamRenderBuffer()
+  })
+}
+
+function flushStreamRenderBuffer() {
+  if (state.streamRenderFrame) {
+    window.cancelAnimationFrame(state.streamRenderFrame)
+    state.streamRenderFrame = 0
+  }
+
+  if (!state.streamRenderBuffer) {
+    return
+  }
+
+  appendPreviewText(state.streamRenderBuffer)
+  state.streamRenderBuffer = ""
+  updateStreamedResultPresentation()
+}
+
+function appendPreviewText(text) {
+  const previousScrollTop = previewField.scrollTop
+
+  if (previewField.value !== state.streamRenderText) {
+    previewField.value = state.streamRenderText
+  }
+
+  previewField.setRangeText(text, previewField.value.length, previewField.value.length, "preserve")
+  state.streamRenderText += text
+
+  if (document.activeElement !== previewField) {
+    previewField.scrollTop = previousScrollTop
+  }
+}
+
+function renderCompletedTransformText(text) {
+  if (state.streamRenderText && text.startsWith(state.streamRenderText)) {
+    appendPreviewText(text.slice(state.streamRenderText.length))
+  } else if (previewField.value !== text) {
+    previewField.value = text
+    state.streamRenderText = text
+  }
+}
+
+function resetStreamRenderingState() {
+  if (state.streamRenderFrame) {
+    window.cancelAnimationFrame(state.streamRenderFrame)
+  }
+
+  state.streamRenderText = ""
+  state.streamRenderBuffer = ""
+  state.streamRenderFrame = 0
+}
+
+function updateStreamedResultPresentation() {
+  updateResultPreview()
+  syncResultViewport()
+  syncLoadingPresentation()
+  updateResultVisibility()
+  updateActionAvailability()
+}
+
+function syncLoadingPresentation() {
+  const showOverlayLoader = state.isLoading && !state.hasResult
+  loader.hidden = !showOverlayLoader
+  previewField.classList.toggle("ai-writer-mvp-preview-loading", showOverlayLoader)
+  updateResultPreview()
+  syncResultViewport()
+}
+
 function showLimitModal(details) {
   const limit = Number(details?.limit || 20)
   limitTitle.textContent = t("daily_limit_title")
   limitText.textContent = t("daily_limit_text", { limit })
+  limitActions.hidden = false
+  buyBox.hidden = true
+  feedbackBox.hidden = true
   panel.classList.add("ai-writer-mvp-panel-limit-open")
   centerPanelInViewport()
   limitModal.hidden = false
   syncLimitModalToPanel()
+  void trackEvent("limit_modal_opened", {
+    success: false,
+    properties: {
+      limit,
+      count: Number(details?.count || limit)
+    }
+  })
+}
+
+function openFeedbackModal() {
+  limitTitle.textContent = ""
+  limitText.textContent = ""
+  limitActions.hidden = true
+  buyBox.hidden = true
+  feedbackBox.hidden = false
+  panel.classList.add("ai-writer-mvp-panel-limit-open")
+  panel.classList.add("ai-writer-mvp-panel-limit-expanded")
+  centerPanelInViewport()
+  limitModal.hidden = false
+  syncLimitModalToPanel()
+  feedbackText.focus()
+  void trackEvent("feedback_modal_opened", {
+    success: true,
+    properties: {
+      source: "floating_button"
+    }
+  })
 }
 
 function hideLimitModal() {
   panel.classList.remove("ai-writer-mvp-panel-limit-open")
   panel.classList.remove("ai-writer-mvp-panel-limit-expanded")
+  limitActions.hidden = false
   buyBox.hidden = true
   feedbackBox.hidden = true
   feedbackText.value = ""
@@ -1112,9 +2042,21 @@ function syncLimitModalToPanel() {
 
 function renderLanguageOptions() {
   return POPULAR_LANGUAGES.map((language) => {
-    const selected = language === DEFAULT_TARGET_LANGUAGE ? " selected" : ""
-    return `<option${selected}>${language}</option>`
+    const selected = language === state.targetLanguage ? " selected" : ""
+    const preferredSuffix = language === state.preferredTargetLanguage ? ` (${t("preferred_badge")})` : ""
+    return `<option value="${language}"${selected}>${language}${preferredSuffix}</option>`
   }).join("")
+}
+
+function refreshLanguageSelectOptions() {
+  const selectedTargetLanguage = state.targetLanguage
+  const selectedPromptLanguage = state.preferredTargetLanguage
+
+  languageSelect.innerHTML = renderLanguageOptions()
+  languageSelect.value = selectedTargetLanguage
+
+  languagePromptSelect.innerHTML = renderLanguageOptions()
+  languagePromptSelect.value = selectedPromptLanguage
 }
 
 async function loadAppLanguagePreference() {
@@ -1132,6 +2074,91 @@ async function loadAppLanguagePreference() {
   applyTranslations()
 }
 
+async function loadOnboardingState() {
+  try {
+    const result = await chrome.storage.local.get(FIRST_RUN_ONBOARDING_KEY)
+    state.shouldShowOnboarding = result?.[FIRST_RUN_ONBOARDING_KEY] !== true
+  } catch {
+    state.shouldShowOnboarding = true
+  } finally {
+    state.onboardingStep = state.shouldShowOnboarding ? "welcome" : null
+    state.onboardingStateLoaded = true
+  }
+}
+
+async function ensureOnboardingStateLoaded() {
+  if (state.onboardingStateLoaded) {
+    return
+  }
+
+  await loadOnboardingState()
+}
+
+async function dismissOnboarding() {
+  state.shouldShowOnboarding = false
+  state.onboardingStep = null
+  state.currentAction = null
+  if (!state.hasResult) {
+    previewField.value = ""
+  }
+  syncOnboardingVisibility()
+  updateTranslateSectionVisibility()
+  updateToneSectionVisibility()
+  updateResultVisibility()
+  updateActionAvailability()
+  ensurePanelInViewport()
+
+  try {
+    await chrome.storage.local.set({
+      [FIRST_RUN_ONBOARDING_KEY]: true
+    })
+  } catch {
+    // Ignore storage errors and keep the session usable.
+  }
+}
+
+async function handleOnboardingNext() {
+  if (state.onboardingStep === "welcome") {
+    startOnboardingWalkthrough()
+    return
+  }
+
+  await advanceOnboardingWalkthrough()
+}
+
+function startOnboardingWalkthrough() {
+  state.onboardingStep = ONBOARDING_WALKTHROUGH_STEPS[0]
+  updateTranslateSectionVisibility()
+  updateToneSectionVisibility()
+  updateResultVisibility()
+  updateActionAvailability()
+  centerPanelInViewport()
+  syncOnboardingVisibility()
+}
+
+async function advanceOnboardingWalkthrough() {
+  const currentIndex = ONBOARDING_WALKTHROUGH_STEPS.indexOf(state.onboardingStep)
+
+  if (currentIndex === -1) {
+    startOnboardingWalkthrough()
+    return
+  }
+
+  const nextStep = ONBOARDING_WALKTHROUGH_STEPS[currentIndex + 1]
+  if (!nextStep) {
+    await dismissOnboarding()
+    return
+  }
+
+  state.onboardingStep = nextStep
+  updateTranslateSectionVisibility()
+  updateToneSectionVisibility()
+  updateResultVisibility()
+  updateActionAvailability()
+  centerPanelInViewport()
+  syncOnboardingVisibility()
+}
+
 function saveAppLanguagePreference(language) {
   void chrome.storage.local.set({
     [APP_LANGUAGE_STORAGE_KEY]: language
@@ -1140,17 +2167,31 @@ function saveAppLanguagePreference(language) {
 
 async function loadLanguagePreference() {
   try {
-    const result = await chrome.storage.local.get(LANGUAGE_PREFERENCE_KEY)
+    const result = await chrome.storage.local.get([
+      LANGUAGE_PREFERENCE_KEY,
+      CORRESPONDENCE_LANGUAGE_BY_HOST_KEY,
+      LANGUAGE_PREFERENCE_PROMPT_KEY
+    ])
     const savedLanguage = result?.[LANGUAGE_PREFERENCE_KEY]
+    const correspondenceLanguageByHost = result?.[CORRESPONDENCE_LANGUAGE_BY_HOST_KEY]
+    state.shouldShowLanguagePreferencePrompt = result?.[LANGUAGE_PREFERENCE_PROMPT_KEY] !== true
+    state.correspondenceLanguageByHost = isLanguageMap(correspondenceLanguageByHost)
+      ? correspondenceLanguageByHost
+      : {}
 
     if (typeof savedLanguage !== "string" || !POPULAR_LANGUAGES.includes(savedLanguage)) {
+      state.hasLanguagePreference = false
       applySuggestedTargetLanguage()
       return
     }
 
+    state.hasLanguagePreference = true
     state.preferredTargetLanguage = savedLanguage
+    refreshLanguageSelectOptions()
     applySuggestedTargetLanguage()
   } catch {
+    state.hasLanguagePreference = false
+    state.shouldShowLanguagePreferencePrompt = true
     applySuggestedTargetLanguage()
   }
 }
@@ -1159,6 +2200,98 @@ function saveLanguagePreference(language) {
   void chrome.storage.local.set({
     [LANGUAGE_PREFERENCE_KEY]: language
   })
+}
+
+function saveCorrespondenceLanguageForCurrentHost(language) {
+  if (!POPULAR_LANGUAGES.includes(language)) {
+    return
+  }
+
+  const hostKey = getCorrespondenceHostKey()
+  if (!hostKey) {
+    return
+  }
+
+  state.correspondenceLanguageByHost = {
+    ...state.correspondenceLanguageByHost,
+    [hostKey]: language
+  }
+
+  void chrome.storage.local.set({
+    [CORRESPONDENCE_LANGUAGE_BY_HOST_KEY]: state.correspondenceLanguageByHost
+  })
+}
+
+function getCorrespondenceLanguageForCurrentHost() {
+  const hostKey = getCorrespondenceHostKey()
+  if (!hostKey) {
+    return ""
+  }
+
+  const language = state.correspondenceLanguageByHost?.[hostKey]
+  return POPULAR_LANGUAGES.includes(language) ? language : ""
+}
+
+function getCorrespondenceHostKey() {
+  return window.location.hostname || ""
+}
+
+function isLanguageMap(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return false
+  }
+
+  return Object.values(value).every((item) => typeof item === "string" && POPULAR_LANGUAGES.includes(item))
+}
+
+function shouldOpenLanguagePreferencePrompt() {
+  return !state.hasLanguagePreference && state.shouldShowLanguagePreferencePrompt
+}
+
+function openLanguagePreferencePrompt() {
+  state.pendingActionAfterLanguagePrompt = "translate"
+  languagePromptSelect.value = state.targetLanguage
+  languagePromptPopover.hidden = false
+  showLanguagePreferencePrompt()
+}
+
+async function saveLanguagePreferenceFromPrompt() {
+  const chosenLanguage = languagePromptSelect.value
+  if (POPULAR_LANGUAGES.includes(chosenLanguage)) {
+    state.preferredTargetLanguage = chosenLanguage
+    state.targetLanguage = chosenLanguage
+    state.hasLanguagePreference = true
+    refreshLanguageSelectOptions()
+    saveLanguagePreference(chosenLanguage)
+  }
+
+  await continueAfterLanguagePreferencePrompt(true)
+}
+
+async function continueAfterLanguagePreferencePrompt(markSeen) {
+  const pendingAction = state.pendingActionAfterLanguagePrompt
+  state.pendingActionAfterLanguagePrompt = null
+  hideLanguagePreferencePrompt()
+
+  if (markSeen) {
+    state.shouldShowLanguagePreferencePrompt = false
+    try {
+      await chrome.storage.local.set({
+        [LANGUAGE_PREFERENCE_PROMPT_KEY]: true
+      })
+    } catch {
+      // Ignore storage errors and continue the flow.
+    }
+  } else {
+    state.shouldShowLanguagePreferencePrompt = false
+    void chrome.storage.local.set({
+      [LANGUAGE_PREFERENCE_PROMPT_KEY]: true
+    })
+  }
+
+  if (pendingAction) {
+    void requestTransform(pendingAction)
+  }
 }
 
 function showHelpPopover(button) {
@@ -1187,9 +2320,17 @@ function hideHelpPopover() {
   helpPopover.hidden = true
 }
 
+function hideOnboardingPopover() {
+  onboardingPopover.hidden = true
+}
+
+function hideLanguagePreferencePrompt() {
+  languagePromptPopover.hidden = true
+}
+
 async function resetDailyLimit() {
   try {
-    await chrome.storage.local.remove("dailyFreeUsage")
+    await chrome.storage.local.remove(DAILY_USAGE_STORAGE_KEY)
     hideLimitModal()
     setStatus("Admin: daily limit reset.", false)
   } catch {
@@ -1197,11 +2338,69 @@ async function resetDailyLimit() {
   }
 }
 
-function getHelpContent(target) {
-  if (target === "model") {
-    return t("model_help")
+async function resetOnboardingPreview() {
+  let storageFailed = false
+
+  try {
+    await chrome.storage.local.remove([FIRST_RUN_ONBOARDING_KEY, LANGUAGE_PREFERENCE_PROMPT_KEY])
+  } catch {
+    storageFailed = true
   }
 
+  state.shouldShowOnboarding = true
+  state.onboardingStateLoaded = true
+  state.onboardingStep = "welcome"
+  state.currentAction = null
+  state.pendingActionAfterLanguagePrompt = null
+  state.shouldShowLanguagePreferencePrompt = true
+  hideLanguagePreferencePrompt()
+  hideOnboardingPopover()
+  panel.style.display = "block"
+  centerPanelInViewport()
+  syncOnboardingVisibility()
+  ensurePanelInViewport()
+  setStatus(storageFailed ? "Admin onboarding reset failed." : "Admin: onboarding reset.", storageFailed)
+}
+
+async function resetTextFlowPreview() {
+  let storageFailed = false
+
+  try {
+    await chrome.storage.local.remove([
+      LANGUAGE_PREFERENCE_KEY,
+      CORRESPONDENCE_LANGUAGE_BY_HOST_KEY,
+      LANGUAGE_PREFERENCE_PROMPT_KEY,
+      FIRST_RUN_ONBOARDING_KEY
+    ])
+  } catch {
+    storageFailed = true
+  }
+
+  state.preferredTargetLanguage = DEFAULT_TARGET_LANGUAGE
+  state.targetLanguage = DEFAULT_TARGET_LANGUAGE
+  state.correspondenceLanguageByHost = {}
+  state.hasLanguagePreference = false
+  state.hasManualTargetLanguageOverride = false
+  state.shouldShowLanguagePreferencePrompt = true
+  state.shouldShowOnboarding = true
+  state.onboardingStateLoaded = true
+  state.onboardingStep = "welcome"
+  state.pendingActionAfterLanguagePrompt = null
+  languagePromptSelect.value = DEFAULT_TARGET_LANGUAGE
+  refreshLanguageSelectOptions()
+  updateLanguageHint()
+  hideLanguagePreferencePrompt()
+  hideOnboardingPopover()
+  clearSelectionState()
+  hideTrigger()
+  panel.style.display = "block"
+  centerPanelInViewport()
+  syncOnboardingVisibility()
+  ensurePanelInViewport()
+  setStatus(storageFailed ? "Admin text-flow reset failed." : "Admin: text-flow reset.", storageFailed)
+}
+
+function getHelpContent(target) {
   if (target === "language") {
     return t("language_help")
   }
@@ -1232,31 +2431,322 @@ function updateToneSectionVisibility() {
 }
 
 function updateResultVisibility() {
-  const shouldShow = !loader.hidden || state.hasResult
+  const shouldShow = state.isLoading || state.hasResult
+  const canApply = state.selectionKind === "input" || state.selectionKind === "contenteditable"
+  const shouldShowFeedbackFab = Boolean(state.hasResult && state.transformedText.trim())
 
   if (resultSection) {
     resultSection.style.display = shouldShow ? "block" : "none"
   }
 
+  if (replyToggleRow) {
+    replyToggleRow.hidden = !state.hasResult
+  }
+
+  if (feedbackFabButton) {
+    feedbackFabButton.hidden = !shouldShowFeedbackFab
+    feedbackFabButton.style.display = shouldShowFeedbackFab ? "inline-flex" : "none"
+  }
+
   if (footer) {
-    footer.style.display = shouldShow ? "flex" : "none"
+    footer.style.display = shouldShow && canApply ? "flex" : "none"
   }
 
   ensurePanelInViewport()
 }
 
+function updateReplyDraftVisibility() {
+  if (!replyDraftRow || !replyToggleRow) {
+    return
+  }
+
+  const shouldShowDraft = state.replyDraftVisible || Boolean(getNormalizedReplyDraft())
+  replyDraftRow.hidden = !shouldShowDraft
+  replyToggleRow.hidden = !state.hasResult
+  replyToggleButton.textContent = getReplyToggleLabel()
+  ensurePanelInViewport()
+}
+
+function getReplyToggleLabel() {
+  const replyTargetLanguage = getReplyTargetLanguage()
+  if (replyTargetLanguage) {
+    return `Reply to ${replyTargetLanguage}`
+  }
+
+  return "Reply"
+}
+
+function updateResultPreview() {
+  const showDiffPreview = shouldShowDiffPreview()
+  previewField.hidden = showDiffPreview
+  diffPreview.hidden = !showDiffPreview
+
+  if (!showDiffPreview) {
+    diffPreview.innerHTML = ""
+    return
+  }
+
+  diffPreview.innerHTML = renderDiffPreviewHtml(state.resultSourceText || state.selectedText, state.transformedText)
+}
+
+function syncResultViewport() {
+  syncPreviewFieldHeight()
+  syncDiffPreviewHeight()
+  ensurePanelInViewport()
+}
+
+function syncPreviewFieldHeight() {
+  previewField.style.height = "auto"
+  const nextHeight = clamp(previewField.scrollHeight, RESULT_MIN_HEIGHT, RESULT_MAX_HEIGHT)
+  previewField.style.height = `${nextHeight}px`
+  previewField.style.overflowY = previewField.scrollHeight > RESULT_MAX_HEIGHT ? "auto" : "hidden"
+}
+
+function syncDiffPreviewHeight() {
+  const nextHeight = clamp(diffPreview.scrollHeight, RESULT_MIN_HEIGHT, RESULT_MAX_HEIGHT)
+  diffPreview.style.height = `${nextHeight}px`
+  diffPreview.style.overflowY = diffPreview.scrollHeight > RESULT_MAX_HEIGHT ? "auto" : "hidden"
+}
+
+function shouldShowDiffPreview() {
+  return (
+    state.currentAction === "grammar" ||
+    state.currentAction === "improve" ||
+    state.currentAction === "tone"
+  ) && Boolean(state.transformedText)
+}
+
+function renderDiffPreviewHtml(originalText, nextText) {
+  const originalTokens = tokenizeDiffText(originalText)
+  const nextTokens = tokenizeDiffText(nextText)
+  const lcsMatrix = buildLcsMatrix(originalTokens, nextTokens)
+  const segments = buildDiffSegments(originalTokens, nextTokens, lcsMatrix)
+
+  return segments.map((segment) => {
+    const escapedText = escapeHtml(segment.value)
+    return segment.added
+      ? `<span class="ai-writer-mvp-diff-added">${escapedText}</span>`
+      : escapedText
+  }).join("")
+}
+
+function tokenizeDiffText(text) {
+  return String(text || "").match(/\S+|\s+/g) || []
+}
+
+function buildLcsMatrix(sourceTokens, targetTokens) {
+  const rows = sourceTokens.length + 1
+  const cols = targetTokens.length + 1
+  const matrix = Array.from({ length: rows }, () => Array(cols).fill(0))
+
+  for (let sourceIndex = sourceTokens.length - 1; sourceIndex >= 0; sourceIndex -= 1) {
+    for (let targetIndex = targetTokens.length - 1; targetIndex >= 0; targetIndex -= 1) {
+      if (sourceTokens[sourceIndex] === targetTokens[targetIndex]) {
+        matrix[sourceIndex][targetIndex] = matrix[sourceIndex + 1][targetIndex + 1] + 1
+      } else {
+        matrix[sourceIndex][targetIndex] = Math.max(
+          matrix[sourceIndex + 1][targetIndex],
+          matrix[sourceIndex][targetIndex + 1]
+        )
+      }
+    }
+  }
+
+  return matrix
+}
+
+function buildDiffSegments(sourceTokens, targetTokens, lcsMatrix) {
+  const segments = []
+  let sourceIndex = 0
+  let targetIndex = 0
+
+  while (sourceIndex < sourceTokens.length && targetIndex < targetTokens.length) {
+    if (sourceTokens[sourceIndex] === targetTokens[targetIndex]) {
+      appendDiffSegment(segments, targetTokens[targetIndex], false)
+      sourceIndex += 1
+      targetIndex += 1
+      continue
+    }
+
+    if (lcsMatrix[sourceIndex + 1][targetIndex] >= lcsMatrix[sourceIndex][targetIndex + 1]) {
+      sourceIndex += 1
+      continue
+    }
+
+    appendDiffSegment(segments, targetTokens[targetIndex], true)
+    targetIndex += 1
+  }
+
+  while (targetIndex < targetTokens.length) {
+    appendDiffSegment(segments, targetTokens[targetIndex], true)
+    targetIndex += 1
+  }
+
+  return segments
+}
+
+function appendDiffSegment(segments, value, added) {
+  if (!value) {
+    return
+  }
+
+  const previousSegment = segments[segments.length - 1]
+  if (previousSegment && previousSegment.added === added) {
+    previousSegment.value += value
+    return
+  }
+
+  segments.push({ value, added })
+}
+
+function escapeHtml(value) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+}
+
+function syncOnboardingVisibility() {
+  if (!onboardingPopover) {
+    return
+  }
+
+  const shouldShow = panel.style.display === "block" && state.shouldShowOnboarding
+  const isWelcomeStep = shouldShow && state.onboardingStep === "welcome"
+  const isWalkthroughStep = shouldShow && ONBOARDING_WALKTHROUGH_STEPS.includes(state.onboardingStep)
+
+  if (isWelcomeStep) {
+    onboardingBadge.hidden = false
+    onboardingGuideTitle.textContent = t("onboarding_title")
+    onboardingGuideText.textContent = t("onboarding_text")
+    onboardingGuideNote.textContent = t("onboarding_text_secondary")
+    onboardingGuideExtra.textContent = t("onboarding_text_tertiary")
+    onboardingGuideNextButton.textContent = t("onboarding_button_next")
+    showOnboardingPopover()
+  } else if (isWalkthroughStep) {
+    onboardingBadge.hidden = true
+    onboardingGuideTitle.textContent = t(`onboarding_${state.onboardingStep}_title`)
+    onboardingGuideText.textContent = t(`onboarding_${state.onboardingStep}_text`)
+    onboardingGuideNote.textContent = t(`onboarding_${state.onboardingStep}_note`)
+    onboardingGuideExtra.textContent = ""
+    onboardingGuideNextButton.textContent = state.onboardingStep === ONBOARDING_WALKTHROUGH_STEPS[ONBOARDING_WALKTHROUGH_STEPS.length - 1]
+      ? t("onboarding_button_done")
+      : t("onboarding_button_next")
+    showOnboardingPopover()
+  } else {
+    hideOnboardingPopover()
+  }
+
+  actionButtons.forEach((button) => {
+    const action = button.getAttribute("data-action")
+    const isTarget = isWalkthroughStep && action === state.onboardingStep
+    button.classList.toggle("ai-writer-mvp-onboarding-target", isTarget)
+  })
+}
+
+function showLanguagePreferencePrompt() {
+  languagePromptTitle.textContent = t("language_prompt_title")
+  languagePromptText.textContent = t("language_prompt_text")
+  languagePromptSaveButton.textContent = t("language_prompt_save")
+  languagePromptLaterButton.textContent = t("language_prompt_later")
+  languagePromptPopover.hidden = false
+
+  const target = languageSection || languageSelect
+  if (!target) {
+    return
+  }
+
+  const targetRect = target.getBoundingClientRect()
+  const popoverRect = languagePromptPopover.getBoundingClientRect()
+  const gap = 12
+  const minLeft = window.scrollX + 12
+  const maxLeft = window.scrollX + window.innerWidth - popoverRect.width - 12
+  const preferredLeft = window.scrollX + targetRect.left + (targetRect.width / 2) - (popoverRect.width / 2)
+  let left = clamp(preferredLeft, minLeft, maxLeft)
+  let top = window.scrollY + targetRect.bottom + gap
+
+  const maxTop = window.scrollY + window.innerHeight - popoverRect.height - 12
+  if (top > maxTop) {
+    top = window.scrollY + targetRect.top - popoverRect.height - gap
+  }
+
+  top = Math.max(window.scrollY + 12, top)
+  languagePromptPopover.style.left = `${left}px`
+  languagePromptPopover.style.top = `${top}px`
+}
+
+function showOnboardingPopover() {
+  const target = getOnboardingPopoverTarget()
+  if (!target) {
+    hideOnboardingPopover()
+    return
+  }
+
+  onboardingPopover.hidden = false
+
+  const targetRect = target.getBoundingClientRect()
+  const popoverRect = onboardingPopover.getBoundingClientRect()
+  const gap = 12
+  const minLeft = window.scrollX + 12
+  const maxLeft = window.scrollX + window.innerWidth - popoverRect.width - 12
+  const preferredLeft = window.scrollX + targetRect.left + (targetRect.width / 2) - (popoverRect.width / 2)
+  let left = clamp(preferredLeft, minLeft, maxLeft)
+  let top = window.scrollY + targetRect.bottom + gap
+
+  const maxTop = window.scrollY + window.innerHeight - popoverRect.height - 12
+  if (top > maxTop) {
+    top = window.scrollY + targetRect.top - popoverRect.height - gap
+  }
+
+  top = Math.max(window.scrollY + 12, top)
+  onboardingPopover.style.left = `${left}px`
+  onboardingPopover.style.top = `${top}px`
+}
+
+function getOnboardingPopoverTarget() {
+  if (!state.onboardingStep) {
+    return null
+  }
+
+  if (state.onboardingStep === "welcome") {
+    return titleField || panel
+  }
+
+  return panel.querySelector(`[data-action="${state.onboardingStep}"]`)
+}
+
 function applySuggestedTargetLanguage() {
-  state.targetLanguage = suggestTargetLanguage(state.selectedText)
+  if (state.replyDraftMode) {
+    state.targetLanguage = getReplyTargetLanguage()
+    languageSelect.value = state.targetLanguage
+    updateLanguageHint()
+    return
+  }
+
+  state.targetLanguage = suggestTargetLanguage(getLanguageSuggestionSourceText())
   languageSelect.value = state.targetLanguage
   updateLanguageHint()
 }
 
+function getLanguageSuggestionSourceText() {
+  if (state.replyDraftMode) {
+    return getNormalizedReplyDraft()
+  }
+
+  return state.selectedText
+}
+
 function suggestTargetLanguage(text) {
   if (looksLikeRussianText(text)) {
+    const correspondenceLanguage = getCorrespondenceLanguageForCurrentHost()
+    if (correspondenceLanguage && correspondenceLanguage !== RUSSIAN_LANGUAGE) {
+      return correspondenceLanguage
+    }
+
     return state.preferredTargetLanguage
   }
 
-  return RUSSIAN_LANGUAGE
+  return state.preferredTargetLanguage
 }
 
 function looksLikeRussianText(text) {
@@ -1276,6 +2766,40 @@ function looksLikeRussianText(text) {
   }
 
   return cyrillicLetters.length / lettersOnly.length > 0.55
+}
+
+function inferCorrespondenceLanguageFromText(text) {
+  const value = String(text || "").trim()
+  if (!value) {
+    return ""
+  }
+
+  if (looksLikeRussianText(value)) {
+    return RUSSIAN_LANGUAGE
+  }
+
+  if (/[ěščřžýáíéůúťďňó]/iu.test(value)) {
+    return "Czech"
+  }
+
+  if (/\b(ahoj|dobry|dekuji|dekuj|prosim|muzu|muze|proc|vecer|sam|sama|sport|spolecnost|odpocinout|plan)\b/iu.test(value)) {
+    return "Czech"
+  }
+
+  return ""
+}
+
+function getSelectionSourceLanguage() {
+  const inferredLanguage = normalizeCorrespondenceLanguage(inferCorrespondenceLanguageFromText(state.selectedText))
+  if (inferredLanguage) {
+    return inferredLanguage
+  }
+
+  return getCorrespondenceLanguageForCurrentHost()
+}
+
+function getReplyTargetLanguage() {
+  return getSelectionSourceLanguage() || state.preferredTargetLanguage
 }
 
 function updateLanguageHint() {
@@ -1309,7 +2833,7 @@ function getContextualTip() {
   }
 
   if (state.currentAction === "translate" && looksLikeRussianText(state.selectedText)) {
-    return "After an incoming message is translated to Russian, the reply language is remembered automatically."
+    return "After an incoming message is translated to your language, the reply language is remembered automatically."
   }
 
   if (state.selectionKind === "page") {
@@ -1320,6 +2844,10 @@ function getContextualTip() {
 }
 
 function readInputSelection(element) {
+  if (element instanceof HTMLElement && panel.contains(element)) {
+    return null
+  }
+
   if (!(element instanceof HTMLTextAreaElement) && !(element instanceof HTMLInputElement && supportsTextSelection(element))) {
     return null
   }
@@ -1336,7 +2864,7 @@ function readInputSelection(element) {
     return null
   }
 
-  const rect = element.getBoundingClientRect()
+  const rect = getInputSelectionRect(element, start, end)
 
   return {
     kind: "input",
@@ -1348,6 +2876,69 @@ function readInputSelection(element) {
   }
 }
 
+function getInputSelectionRect(element, start, end) {
+  try {
+    const computedStyle = window.getComputedStyle(element)
+    const mirror = document.createElement("div")
+    const marker = document.createElement("span")
+    const elementRect = element.getBoundingClientRect()
+    const beforeSelection = element.value.slice(0, end)
+
+    mirror.setAttribute("aria-hidden", "true")
+    mirror.style.position = "absolute"
+    mirror.style.visibility = "hidden"
+    mirror.style.pointerEvents = "none"
+    mirror.style.whiteSpace = element instanceof HTMLTextAreaElement ? "pre-wrap" : "pre"
+    mirror.style.wordBreak = "break-word"
+    mirror.style.overflowWrap = "break-word"
+    mirror.style.top = "0"
+    mirror.style.left = "0"
+    mirror.style.width = `${element.clientWidth}px`
+    mirror.style.minHeight = `${element.clientHeight}px`
+    mirror.style.boxSizing = computedStyle.boxSizing
+    mirror.style.font = computedStyle.font
+    mirror.style.fontFamily = computedStyle.fontFamily
+    mirror.style.fontSize = computedStyle.fontSize
+    mirror.style.fontWeight = computedStyle.fontWeight
+    mirror.style.fontStyle = computedStyle.fontStyle
+    mirror.style.letterSpacing = computedStyle.letterSpacing
+    mirror.style.lineHeight = computedStyle.lineHeight
+    mirror.style.textTransform = computedStyle.textTransform
+    mirror.style.textIndent = computedStyle.textIndent
+    mirror.style.textRendering = computedStyle.textRendering
+    mirror.style.paddingTop = computedStyle.paddingTop
+    mirror.style.paddingRight = computedStyle.paddingRight
+    mirror.style.paddingBottom = computedStyle.paddingBottom
+    mirror.style.paddingLeft = computedStyle.paddingLeft
+    mirror.style.borderTopWidth = computedStyle.borderTopWidth
+    mirror.style.borderRightWidth = computedStyle.borderRightWidth
+    mirror.style.borderBottomWidth = computedStyle.borderBottomWidth
+    mirror.style.borderLeftWidth = computedStyle.borderLeftWidth
+
+    mirror.textContent = beforeSelection
+    marker.textContent = "\u200b"
+    mirror.append(marker)
+    document.body.append(mirror)
+
+    const mirrorRect = mirror.getBoundingClientRect()
+    const markerRect = marker.getBoundingClientRect()
+    mirror.remove()
+
+    if (markerRect.width || markerRect.height) {
+      return new DOMRect(
+        elementRect.left + (markerRect.left - mirrorRect.left) - element.scrollLeft,
+        elementRect.top + (markerRect.top - mirrorRect.top) - element.scrollTop,
+        Math.max(markerRect.width, 1),
+        Math.max(markerRect.height, Number.parseFloat(computedStyle.lineHeight) || 16)
+      )
+    }
+  } catch {
+    // Fall through to the input box rect below.
+  }
+
+  return element.getBoundingClientRect()
+}
+
 function readEditableSelection() {
   const selection = window.getSelection()
   const text = selection ? selection.toString() : ""
@@ -1357,14 +2948,18 @@ function readEditableSelection() {
   }
 
   const range = selection.getRangeAt(0)
-  const editableElement = findEditableContainer(range.commonAncestorContainer)
+  const editableElement = (
+    findEditableContainer(range.commonAncestorContainer) ||
+    findEditableContainer(selection.anchorNode) ||
+    findEditableContainer(document.activeElement)
+  )
   if (!editableElement) {
     return null
   }
 
-  const rect = range.getBoundingClientRect()
+  const rect = resolveSelectionRect(range)
 
-  if (!rect.width && !rect.height) {
+  if (!rect || (!rect.width && !rect.height)) {
     return null
   }
 
@@ -1391,8 +2986,8 @@ function readPageSelection() {
     return null
   }
 
-  const rect = range.getBoundingClientRect()
-  if (!rect.width && !rect.height) {
+  const rect = resolveSelectionRect(range)
+  if (!rect || (!rect.width && !rect.height)) {
     return null
   }
 
@@ -1406,6 +3001,14 @@ function readPageSelection() {
 }
 
 function rememberInputSelection(selection) {
+  const isSameSelection = (
+    state.selectedText === selection.selectedText &&
+    state.selectionKind === selection.kind &&
+    state.activeElement === selection.activeElement &&
+    state.inputSelectionStart === selection.start &&
+    state.inputSelectionEnd === selection.end
+  )
+
   state.selectedText = selection.selectedText
   state.transformedText = ""
   state.activeElement = selection.activeElement
@@ -1413,10 +3016,27 @@ function rememberInputSelection(selection) {
   state.inputSelectionEnd = selection.end
   state.selectionRange = null
   state.selectionKind = selection.kind
-  applySuggestedTargetLanguage()
+  if (!isSameSelection) {
+    state.replyDraftMode = false
+    state.replyDraftVisible = false
+    resetTransformChain()
+    state.hasManualTargetLanguageOverride = false
+  }
+  if (!state.hasManualTargetLanguageOverride) {
+    applySuggestedTargetLanguage()
+  } else {
+    languageSelect.value = state.targetLanguage
+  }
 }
 
 function rememberEditableSelection(selection) {
+  const isSameSelection = (
+    state.selectedText === selection.selectedText &&
+    state.selectionKind === selection.kind &&
+    state.activeElement === selection.activeElement &&
+    areRangesEquivalent(state.selectionRange, selection.range)
+  )
+
   state.selectedText = selection.selectedText
   state.transformedText = ""
   state.activeElement = selection.activeElement
@@ -1424,10 +3044,25 @@ function rememberEditableSelection(selection) {
   state.inputSelectionStart = null
   state.inputSelectionEnd = null
   state.selectionKind = selection.kind
-  applySuggestedTargetLanguage()
+  if (!isSameSelection) {
+    state.replyDraftMode = false
+    state.replyDraftVisible = false
+    resetTransformChain()
+    state.hasManualTargetLanguageOverride = false
+  }
+  if (!state.hasManualTargetLanguageOverride) {
+    applySuggestedTargetLanguage()
+  } else {
+    languageSelect.value = state.targetLanguage
+  }
 }
 
 function rememberPageSelection(selection) {
+  const isSameSelection = (
+    state.selectedText === selection.selectedText &&
+    state.selectionKind === selection.kind
+  )
+
   state.selectedText = selection.selectedText
   state.transformedText = ""
   state.activeElement = null
@@ -1435,19 +3070,99 @@ function rememberPageSelection(selection) {
   state.inputSelectionStart = null
   state.inputSelectionEnd = null
   state.selectionKind = selection.kind
-  applySuggestedTargetLanguage()
+  if (!isSameSelection) {
+    state.replyDraftMode = false
+    state.replyDraftVisible = false
+    resetTransformChain()
+    state.hasManualTargetLanguageOverride = false
+  }
+  if (!state.hasManualTargetLanguageOverride) {
+    applySuggestedTargetLanguage()
+  } else {
+    languageSelect.value = state.targetLanguage
+  }
+}
+
+function areRangesEquivalent(left, right) {
+  if (!left || !right) {
+    return false
+  }
+
+  return (
+    left.startContainer === right.startContainer &&
+    left.startOffset === right.startOffset &&
+    left.endContainer === right.endContainer &&
+    left.endOffset === right.endOffset
+  )
+}
+
+function resetTransformChain() {
+  state.resultSourceText = ""
+  state.lastCompletedAction = null
+}
+
+function getSelectionAnchorRect(range) {
+  const caretRect = getRangeEndCaretRect(range)
+  if (caretRect) {
+    return caretRect
+  }
+
+  const clientRects = Array.from(range.getClientRects()).filter((rect) => rect.width || rect.height)
+
+  if (!clientRects.length) {
+    return range.getBoundingClientRect()
+  }
+
+  // Anchor the trigger to the last visible fragment of the selection instead of
+  // the full union box, which can drift far to the right on wrapped selections.
+  const sortedRects = clientRects.slice().sort((left, right) => {
+    if (Math.abs(left.bottom - right.bottom) > 1) {
+      return left.bottom - right.bottom
+    }
+
+    return left.right - right.right
+  })
+
+  return sortedRects[sortedRects.length - 1]
+}
+
+function getRangeEndCaretRect(range) {
+  try {
+    const caretRange = range.cloneRange()
+    caretRange.collapse(false)
+
+    const caretRects = Array.from(caretRange.getClientRects()).filter((rect) => rect.width || rect.height)
+    if (caretRects.length) {
+      return caretRects[caretRects.length - 1]
+    }
+
+    const caretRect = caretRange.getBoundingClientRect()
+    if (caretRect.width || caretRect.height) {
+      return caretRect
+    }
+  } catch {
+    // Fall back to the full selection rect below.
+  }
+
+  return null
 }
 
 function clearSelectionState() {
+  googleDocsSelectionIntentUntil = 0
   state.selectedText = ""
   state.transformedText = ""
+  resetStreamRenderingState()
+  state.resultSourceText = ""
   state.currentAction = null
   state.hasResult = false
+  state.hasManualTargetLanguageOverride = false
+  state.replyDraftVisible = false
   state.selectionRange = null
   state.activeElement = null
   state.inputSelectionStart = null
   state.inputSelectionEnd = null
   state.selectionKind = null
+  state.lastCompletedAction = null
   applySuggestedTargetLanguage()
   updateTranslateSectionVisibility()
   updateToneSectionVisibility()
@@ -1455,11 +3170,19 @@ function clearSelectionState() {
 }
 
 function showTriggerAtRect(rect) {
+  lastShownTriggerRect = new DOMRect(rect.left, rect.top, rect.width, rect.height)
   positionTrigger(rect)
-  trigger.style.display = "block"
+  trigger.style.display = "inline-flex"
 }
 
 function finishSuccessfulApply() {
+  void trackEvent("result_applied", {
+    success: true,
+    durationMs: state.lastTransformMetrics?.totalMs,
+    properties: {
+      resultLength: previewField.value.length
+    }
+  })
   setStatus(t("replaced"), false)
   clearSelectionState()
   hidePanel()
@@ -1467,17 +3190,32 @@ function finishSuccessfulApply() {
 }
 
 function findEditableContainer(node) {
-  const element = node instanceof Element ? node : node?.parentElement
-  if (!element) {
-    return null
+  let current = node instanceof Element ? node : node?.parentElement
+
+  while (current) {
+    if (current instanceof HTMLElement && current.matches("[contenteditable=''], [contenteditable='true'], [contenteditable='plaintext-only']")) {
+      return current
+    }
+
+    if (current.parentElement) {
+      current = current.parentElement
+      continue
+    }
+
+    const root = current.getRootNode?.()
+    if (root instanceof ShadowRoot) {
+      current = root.host instanceof HTMLElement ? root.host : null
+      continue
+    }
+
+    current = null
   }
 
-  const editable = element.closest("[contenteditable=''], [contenteditable='true'], [contenteditable='plaintext-only']")
-  return editable instanceof HTMLElement ? editable : null
+  return null
 }
 
 function positionTrigger(rect) {
-  trigger.style.display = "block"
+  trigger.style.display = "inline-flex"
 
   const triggerRect = trigger.getBoundingClientRect()
   const triggerWidth = triggerRect.width || 68
@@ -1499,9 +3237,7 @@ function positionTrigger(rect) {
 }
 
 function positionPanel(triggerRect) {
-  const panelRect = panel.getBoundingClientRect()
-  const panelWidth = panelRect.width || PANEL_WIDTH
-  const panelHeight = panelRect.height || 260
+  const { width: panelWidth, height: panelHeight } = getPanelMetrics()
 
   let left = window.scrollX + triggerRect.left
   let top = window.scrollY + triggerRect.bottom + TRIGGER_GAP
@@ -1524,9 +3260,7 @@ function positionPanel(triggerRect) {
 }
 
 function centerPanelInViewport() {
-  const panelRect = panel.getBoundingClientRect()
-  const panelWidth = panelRect.width || PANEL_WIDTH
-  const panelHeight = panelRect.height || 360
+  const { width: panelWidth, height: panelHeight } = getPanelMetrics()
 
   const left = window.scrollX + Math.max(PANEL_MARGIN, (window.innerWidth - panelWidth) / 2)
   const top = window.scrollY + Math.max(PANEL_MARGIN, (window.innerHeight - panelHeight) / 2)
@@ -1541,8 +3275,7 @@ function ensurePanelInViewport() {
   }
 
   const panelRect = panel.getBoundingClientRect()
-  const panelWidth = panelRect.width || PANEL_WIDTH
-  const panelHeight = panelRect.height || 360
+  const { width: panelWidth, height: panelHeight } = getPanelMetrics()
   const minLeft = window.scrollX + PANEL_MARGIN
   const maxLeft = window.scrollX + window.innerWidth - panelWidth - PANEL_MARGIN
   const minTop = window.scrollY + PANEL_MARGIN
@@ -1554,6 +3287,15 @@ function ensurePanelInViewport() {
   panel.style.top = `${clamp(currentTop, minTop, maxTop)}px`
 }
 
+function getPanelMetrics() {
+  const panelRect = panel.getBoundingClientRect()
+
+  return {
+    width: panelRect.width || PANEL_WIDTH,
+    height: panelRect.height || PANEL_HEIGHT
+  }
+}
+
 function clamp(value, min, max) {
   if (max < min) {
     return min
@@ -1562,9 +3304,9 @@ function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max)
 }
 
-async function copyResult() {
-  const nextText = previewField.value
-  if (!nextText) {
+async function copyTextValue(text, eventName) {
+  const nextText = typeof text === "string" ? text : ""
+  if (!nextText.trim()) {
     setStatus(t("nothing_copy"), true)
     return
   }
@@ -1572,6 +3314,13 @@ async function copyResult() {
   try {
     await navigator.clipboard.writeText(nextText)
     setStatus(t("copied"), false)
+    void trackEvent(eventName, {
+      success: true,
+      durationMs: state.lastTransformMetrics?.totalMs,
+      properties: {
+        resultLength: nextText.length
+      }
+    })
   } catch {
     setStatus(t("copy_failed"), true)
   }
@@ -1585,7 +3334,6 @@ async function submitFeedback(message) {
         message,
         appLanguage: state.appLanguage,
         currentAction: state.currentAction,
-        modelTier: state.modelTier,
         targetLanguage: state.targetLanguage,
         tone: state.tone,
         browserLanguage: navigator.language || "",
@@ -1609,23 +3357,89 @@ async function submitFeedback(message) {
   })
 }
 
+async function trackEvent(eventName, options = {}) {
+  try {
+    await new Promise((resolve) => {
+      chrome.runtime.sendMessage({
+        type: "TRACK_EVENT",
+        payload: {
+          event_name: eventName,
+          session_id: state.analyticsSessionId,
+          page_host: window.location.hostname || "",
+          action: options.action ?? state.currentAction,
+          selection_kind: state.selectionKind,
+          success: typeof options.success === "boolean" ? options.success : null,
+          duration_ms: options.durationMs ?? null,
+          error_code: options.errorCode ?? null,
+          error_message: options.errorMessage ?? null,
+          properties: options.properties || null
+        }
+      }, () => {
+        resolve()
+      })
+    })
+  } catch {
+    // Ignore analytics failures so the editor stays responsive.
+  }
+}
+
 function updateActionAvailability() {
   const canApply = state.selectionKind === "input" || state.selectionKind === "contenteditable"
-  const isLoading = !loader.hidden
+  const isLoading = state.isLoading
+  const hasReplyDraft = Boolean(getNormalizedReplyDraft())
+  const hasPreviewText = Boolean(previewField.value)
   applyButton.disabled = isLoading || !canApply
-  copyButton.disabled = isLoading || !previewField.value
+  applyButton.hidden = !canApply
+  previewCopyButton.disabled = isLoading || !hasPreviewText
+  previewCopyButton.hidden = !hasPreviewText
+  replyDraftCopyButton.disabled = isLoading || !hasReplyDraft
+  replyDraftCopyButton.hidden = !hasReplyDraft
+  replyTranslateButton.disabled = isLoading || !hasReplyDraft
 }
 
 function getReadyMessage() {
   return t("ready")
 }
 
-function getResultMessage() {
-  if (state.selectionKind === "page") {
-    return t("done_page")
+function getLoadingMessage(action) {
+  if (action && getUiStrings()?.[`loading_${action}`]) {
+    return t(`loading_${action}`)
   }
 
-  return t("done_editable")
+  return t("working")
+}
+
+function setLoaderMessage(action) {
+  loaderText.textContent = getLoadingMessage(action)
+}
+
+function buildClientTransformMetrics(metrics) {
+  const totalMs = performance.now() - state.transformStartedAt
+  const firstChunkMs = state.firstStreamChunkAt
+    ? state.firstStreamChunkAt - state.transformStartedAt
+    : 0
+
+  return {
+    totalMs: roundDuration(totalMs),
+    firstChunkMs: roundDuration(firstChunkMs),
+    stages: metrics || null
+  }
+}
+
+function logTransformMetrics(metrics) {
+  if (!metrics) {
+    return
+  }
+
+  console.info("[AI Writer] Client transform metrics", metrics)
+}
+
+function getResultMessage() {
+  return ""
+}
+
+function roundDuration(value) {
+  return Number((Number(value) || 0).toFixed(1))
 }
 
 function syncCorrespondenceLanguage(action, result) {
@@ -1634,29 +3448,36 @@ function syncCorrespondenceLanguage(action, result) {
   }
 
   const sourceLanguage = typeof result?.sourceLanguage === "string" ? result.sourceLanguage : ""
-  const targetLanguage = typeof result?.targetLanguage === "string" ? result.targetLanguage : state.targetLanguage
-
-  if (sourceLanguage && sourceLanguage !== RUSSIAN_LANGUAGE && targetLanguage === RUSSIAN_LANGUAGE) {
-    state.preferredTargetLanguage = sourceLanguage
-    saveLanguagePreference(sourceLanguage)
-    return
-  }
-
-  if (targetLanguage && targetLanguage !== RUSSIAN_LANGUAGE && looksLikeRussianText(state.selectedText)) {
-    state.preferredTargetLanguage = targetLanguage
-    saveLanguagePreference(targetLanguage)
+  const inferredSourceLanguage = inferCorrespondenceLanguageFromText(state.resultSourceText || state.selectedText)
+  const correspondenceLanguage = normalizeCorrespondenceLanguage(inferredSourceLanguage || sourceLanguage)
+  if (correspondenceLanguage) {
+    saveCorrespondenceLanguageForCurrentHost(correspondenceLanguage)
   }
 }
 
+function normalizeCorrespondenceLanguage(language) {
+  return POPULAR_LANGUAGES.includes(language) ? language : ""
+}
+
 function applyTranslations() {
-  titleField.textContent = t("title")
   translateLabel.textContent = t("translate_to")
   toneLabel.textContent = t("tone_to")
-  resultLabel.textContent = t("result")
+  onboardingBadge.textContent = t("onboarding_badge")
+  onboardingGuideSkipButton.textContent = t("onboarding_button_skip")
+  languagePromptTitle.textContent = t("language_prompt_title")
+  languagePromptText.textContent = t("language_prompt_text")
+  languagePromptSaveButton.textContent = t("language_prompt_save")
+  languagePromptLaterButton.textContent = t("language_prompt_later")
   previewField.placeholder = t("result_placeholder")
-  loaderText.textContent = "I'm already coming, yeah, baby."
-  copyButton.textContent = t("copy")
+  previewCopyButton.setAttribute("aria-label", t("copy"))
+  previewCopyButton.setAttribute("title", t("copy"))
+  replyDraftCopyButton.setAttribute("aria-label", t("copy"))
+  replyDraftCopyButton.setAttribute("title", t("copy"))
+  feedbackFabButton.setAttribute("aria-label", t("leave_feedback"))
+  feedbackFabButton.setAttribute("title", t("leave_feedback"))
+  setLoaderMessage(state.currentAction)
   applyButton.textContent = t("replace_text")
+  replyTranslateButton.textContent = t("action_translate")
   buyCreditsButton.textContent = t("buy_credits")
   openFeedbackButton.textContent = t("leave_feedback")
   buyPlaceholder.textContent = t("model_buy_next")
@@ -1667,7 +3488,6 @@ function applyTranslations() {
   const appLanguage = getCurrentAppLanguageConfig()
   appLanguageFlag.textContent = getFlagEmoji(appLanguage.flag)
   appLanguageButton.setAttribute("aria-label", `App language: ${appLanguage.label}`)
-  modelSelect.setAttribute("aria-label", "Model choice")
   appLanguageOptions.forEach((button) => {
     const value = button.getAttribute("data-app-language")
     const isSelected = value === state.appLanguage
@@ -1682,6 +3502,7 @@ function applyTranslations() {
 
     button.textContent = t(`action_${action}`)
   })
+  syncOnboardingVisibility()
   updateInlineTip()
   updateLanguageHint()
   if (!limitModal.hidden) {

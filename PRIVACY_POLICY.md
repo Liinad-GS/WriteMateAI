@@ -63,7 +63,6 @@ Feedback metadata can include:
 - Extension version
 - App language
 - Current action
-- Model tier
 - Target language
 - Tone
 - Browser language
