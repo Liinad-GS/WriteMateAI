@@ -77,6 +77,7 @@ RATE_LIMIT_MAX_EVENTS=120
 ENABLE_MOCK_AI_FALLBACK=false
 FEEDBACK_WEBHOOK_URL=https://your-webhook.example.com/feedback
 GOOGLE_APPLICATION_CREDENTIALS=./your-service-account.json
+GOOGLE_APPLICATION_CREDENTIALS_JSON=
 BIGQUERY_PROJECT_ID=your-gcp-project-id
 BIGQUERY_DATASET_ID=lgext_analytics
 BIGQUERY_EVENTS_TABLE_ID=events
@@ -84,6 +85,8 @@ CORS_ALLOWED_ORIGINS=
 ```
 
 Note: `CORS_ALLOWED_ORIGINS` can be finalized after the Chrome Web Store draft gives us the extension ID.
+
+For Railway, `GOOGLE_APPLICATION_CREDENTIALS_JSON` is usually easier than uploading a JSON file. Paste the full Google service-account JSON into that variable, or leave analytics disabled for the first technical smoke test.
 
 ## Stage 2: First Store Draft
 

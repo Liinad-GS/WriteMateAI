@@ -17,6 +17,7 @@ const bigQueryProjectId = process.env.BIGQUERY_PROJECT_ID || ""
 const bigQueryDatasetId = process.env.BIGQUERY_DATASET_ID || ""
 const bigQueryEventsTableId = process.env.BIGQUERY_EVENTS_TABLE_ID || "events"
 const bigQueryCredentialsPath = process.env.GOOGLE_APPLICATION_CREDENTIALS || ""
+const bigQueryCredentialsJson = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON || ""
 const AI_REQUEST_TIMEOUT_MS = Number(process.env.AI_REQUEST_TIMEOUT_MS || 15000)
 const TRANSFORM_CACHE_TTL_MS = Number(process.env.TRANSFORM_CACHE_TTL_MS || 5 * 60 * 1000)
 const TRANSFORM_CACHE_MAX_ENTRIES = Number(process.env.TRANSFORM_CACHE_MAX_ENTRIES || 200)
@@ -430,6 +431,12 @@ function getBigQueryClient() {
     }
 
     options.keyFilename = resolvedBigQueryCredentialsPath
+  } else if (bigQueryCredentialsJson) {
+    try {
+      options.credentials = JSON.parse(bigQueryCredentialsJson)
+    } catch {
+      throw createInternalError("GOOGLE_APPLICATION_CREDENTIALS_JSON must be valid JSON")
+    }
   }
 
   bigQueryClient = new BigQuery(options)
@@ -448,7 +455,12 @@ function buildHealthResponse() {
       restricted: allowedOrigins.length > 0
     },
     analytics: {
-      configured: Boolean(bigQueryProjectId && bigQueryDatasetId && bigQueryEventsTableId && resolvedBigQueryCredentialsPath)
+      configured: Boolean(
+        bigQueryProjectId &&
+        bigQueryDatasetId &&
+        bigQueryEventsTableId &&
+        (resolvedBigQueryCredentialsPath || bigQueryCredentialsJson)
+      )
     }
   }
 }
