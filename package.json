@@ -1,0 +1,10 @@
+{
+  "name": "writemate-ai",
+  "version": "0.2.0",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix backend ci",
+    "start": "npm --prefix backend start",
+    "check": "node --check extension/content.js && node --check extension/background.js && node --check backend/server.js && node --check scripts/package-extension.mjs"
+  }
+}

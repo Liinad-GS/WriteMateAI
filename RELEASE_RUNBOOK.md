@@ -35,8 +35,19 @@ You do:
 
 1. Open the hosting dashboard, for example Railway, Render, or Fly.
 2. Create or open the backend service for this project.
-3. Add the production environment variables.
-4. Send Codex the public HTTPS URL.
+3. Connect the GitHub repository `Liinad-GS/WriteMateAI`.
+4. Keep the service root at the repository root. The root `package.json` tells Railway to install and start the backend.
+5. Add the production environment variables.
+6. Send Codex the public HTTPS URL.
+
+Railway should detect a Node app and use:
+
+```bash
+npm run build
+npm start
+```
+
+The root scripts forward those commands to `backend/`.
 
 Codex does:
 
