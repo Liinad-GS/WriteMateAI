@@ -25,20 +25,18 @@ Last updated: April 16, 2026
   - `/api/transform/stream` returns streamed OpenAI text
   - `/api/events` records analytics events
   - `/api/feedback` accepts feedback messages
+- Chrome Web Store extension ID is `bdhhojkkdjidacohlgalckihekfpfaap`
+- Production `CORS_ALLOWED_ORIGINS` is restricted to `chrome-extension://bdhhojkkdjidacohlgalckihekfpfaap`
+- Final production zip was regenerated at `dist/WriteMateAI-chrome-0.2.0.zip`
 
 ## Still Needed Before Submission
 
-- Production `CORS_ALLOWED_ORIGINS` set to the final Chrome extension origin
-- Final release build regenerated after Chrome Web Store extension ID is known
 - Release smoke test against the generated build
 - Store screenshots
 - Chrome Web Store listing form completed
 
 ## Highest Priority Next Steps
 
-1. Create the Chrome Web Store draft and get the extension ID
-2. Set `CORS_ALLOWED_ORIGINS=chrome-extension://<extension-id>` for the production backend
-3. Rebuild the final zip with `node scripts/package-extension.mjs --backend-url=https://writemateai.up.railway.app`
-4. Load `dist/chrome-store/` in Chrome and smoke test the packaged build
-5. Capture store screenshots
-6. Upload the final zip and listing assets to Chrome Web Store
+1. Load `dist/chrome-store/` in Chrome and smoke test the packaged build
+2. Capture store screenshots
+3. Upload `dist/WriteMateAI-chrome-0.2.0.zip` and listing assets to Chrome Web Store
