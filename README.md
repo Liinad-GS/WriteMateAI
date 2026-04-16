@@ -2,7 +2,59 @@
 
 ![WriteMate AI logo](extension/assets/writemate-logo.png)
 
-WriteMate AI is a Chrome extension for AI-assisted translation and writing directly inside web pages. A user selects text, opens a small on-page widget, chooses an action, and receives a streamed AI result without switching tabs.
+WriteMate helps you write better, translate instantly, and respond with confidence — right where you type.
+
+No switching between tools. No friction. Just better communication.
+
+---
+
+Writing shouldn’t slow you down.
+
+Fix grammar, clean up awkward sentences, and make your message sound right — without overthinking every word.
+
+---
+
+Working across languages?
+
+Translate text instantly and reply in the same language, without leaving the page.
+
+---
+
+Not sure about the tone?
+
+Make your message more clear, more direct, or more professional in one step.
+
+---
+
+Need to move faster?
+
+Rewrite and respond in seconds, without losing your voice.
+
+---
+
+Something feels off?
+
+Rephrase, simplify, or polish your text until it reads naturally.
+
+---
+
+WriteMate gives you just enough help to write clearly and move on.
+
+---
+
+What you can do with WriteMate:
+• fix grammar and improve clarity
+• rewrite and simplify text
+• translate between languages
+• adjust tone depending on context
+• respond faster in chats and emails
+
+---
+
+WriteMate fits into your workflow — whether you're writing emails, chatting, or creating content.
+
+Write clearly. Move faster.
+
 
 The project is built as a portfolio-ready full-stack browser extension: Manifest V3 extension, Node.js backend proxy, streaming LLM responses, usage limits, feedback collection, analytics, and Chrome Web Store packaging.
 
