@@ -79,6 +79,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (!corsResult.allowed) {
+    logBlockedOrigin(req)
     res.writeHead(403, { "Content-Type": "text/plain; charset=utf-8" })
     res.end("Origin is not allowed")
     return
@@ -1218,6 +1219,14 @@ function addCorsHeaders(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
   res.setHeader("Access-Control-Allow-Headers", "Content-Type")
   return { allowed }
+}
+
+function logBlockedOrigin(req) {
+  console.warn("[AI Writer] Blocked CORS origin", {
+    origin: String(req.headers.origin || ""),
+    method: req.method,
+    path: req.url
+  })
 }
 
 function readJson(req) {
