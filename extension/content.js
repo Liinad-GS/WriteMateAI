@@ -41,17 +41,11 @@ const POPULAR_LANGUAGES = [
   "Indonesian"
 ]
 const TONE_OPTIONS = [
-  { value: "professional", label: "Professional" },
-  { value: "friendly", label: "Friendly" },
-  { value: "confident", label: "Confident" },
-  { value: "warm", label: "Warm" },
-  { value: "shorter", label: "Shorter" }
-]
-const INLINE_TIPS = [
-  "Use Grammar first if you want a cleaner draft before translation.",
-  "Tone is helpful when the meaning is right but the message feels off.",
-  "Replace text works best in chat boxes, email composers, and form fields.",
-  "Translate remembers the other person's language after incoming messages."
+  { value: "professional", labelKey: "tone_professional" },
+  { value: "friendly", labelKey: "tone_friendly" },
+  { value: "confident", labelKey: "tone_confident" },
+  { value: "warm", labelKey: "tone_warm" },
+  { value: "shorter", labelKey: "tone_shorter" }
 ]
 const APP_UI_LANGUAGES = [
   { value: "en", label: "English", flag: "US" },
@@ -74,11 +68,27 @@ const UI_STRINGS = {
     action_tone: "Tone",
     translate_to: "Translate to",
     tone_to: "Change tone to",
+    tone_professional: "Professional",
+    tone_friendly: "Friendly",
+    tone_confident: "Confident",
+    tone_warm: "Warm",
+    tone_shorter: "Shorter",
     result: "Result",
     result_placeholder: "Result will appear here",
     copy: "Copy",
+    reply: "Reply",
+    reply_to: "Reply to {language}",
+    reply_draft: "Reply draft",
+    reply_placeholder: "Write your reply in your language",
     replace_text: "Replace text",
     tip_label: "Tip",
+    tip_inline_grammar_first: "Use Grammar first if you want a cleaner draft before translation.",
+    tip_inline_tone_general: "Tone is helpful when the meaning is right but the message feels off.",
+    tip_inline_replace: "Replace text works best in chat boxes, email composers, and form fields.",
+    tip_inline_translate_memory: "Translate remembers the other person's language after incoming messages.",
+    tip_tone_context: "Try Tone when the meaning is right but the wording feels too harsh, too dry, or too long.",
+    tip_translate_reply_memory: "After an incoming message is translated to your language, the reply language is remembered automatically.",
+    tip_copy_page: "On regular page text, Copy is the safest way to reuse the result.",
     daily_limit_title: "Daily free limit reached",
     daily_limit_text: "You have used all {limit} free results for today.",
     buy_credits: "Buy access for $2",
@@ -139,11 +149,30 @@ const UI_STRINGS = {
     action_translate: "Traducir",
     action_grammar: "Gramatica",
     action_improve: "Mejorar",
+    action_tone: "Tono",
     translate_to: "Traducir a",
+    tone_to: "Cambiar tono a",
+    tone_professional: "Profesional",
+    tone_friendly: "Amistoso",
+    tone_confident: "Seguro",
+    tone_warm: "Cercano",
+    tone_shorter: "Mas corto",
     result: "Resultado",
     result_placeholder: "El resultado aparecera aqui",
     copy: "Copiar",
+    reply: "Responder",
+    reply_to: "Responder en {language}",
+    reply_draft: "Borrador de respuesta",
+    reply_placeholder: "Escribe tu respuesta en tu idioma",
     replace_text: "Reemplazar texto",
+    tip_label: "Consejo",
+    tip_inline_grammar_first: "Usa Gramatica primero si quieres un borrador mas limpio antes de traducir.",
+    tip_inline_tone_general: "Tono ayuda cuando el significado es correcto pero el mensaje no termina de sonar bien.",
+    tip_inline_replace: "Reemplazar texto funciona mejor en chats, redactores de correo y campos de formulario.",
+    tip_inline_translate_memory: "Traducir recuerda el idioma de la otra persona despues de los mensajes entrantes.",
+    tip_tone_context: "Prueba Tono cuando el significado es correcto pero la redaccion suena demasiado dura, seca o larga.",
+    tip_translate_reply_memory: "Despues de traducir un mensaje entrante a tu idioma, el idioma de respuesta se recuerda automaticamente.",
+    tip_copy_page: "En texto normal de una pagina, Copiar es la forma mas segura de reutilizar el resultado.",
     daily_limit_title: "Limite diario gratuito alcanzado",
     daily_limit_text: "Has usado los {limit} resultados gratuitos de hoy.",
     buy_credits: "Comprar creditos",
@@ -176,11 +205,30 @@ const UI_STRINGS = {
     action_translate: "Ubersetzen",
     action_grammar: "Grammatik",
     action_improve: "Verbessern",
+    action_tone: "Ton",
     translate_to: "Ubersetzen in",
+    tone_to: "Ton andern zu",
+    tone_professional: "Professionell",
+    tone_friendly: "Freundlich",
+    tone_confident: "Selbstbewusst",
+    tone_warm: "Herzlich",
+    tone_shorter: "Kurzer",
     result: "Ergebnis",
     result_placeholder: "Das Ergebnis erscheint hier",
     copy: "Kopieren",
+    reply: "Antworten",
+    reply_to: "Antworten auf {language}",
+    reply_draft: "Antwortentwurf",
+    reply_placeholder: "Schreibe deine Antwort in deiner Sprache",
     replace_text: "Text ersetzen",
+    tip_label: "Hinweis",
+    tip_inline_grammar_first: "Nutze Grammatik zuerst, wenn du vor der Ubersetzung einen saubereren Entwurf willst.",
+    tip_inline_tone_general: "Ton hilft, wenn die Bedeutung stimmt, die Nachricht aber noch nicht richtig klingt.",
+    tip_inline_replace: "Text ersetzen funktioniert am besten in Chats, E-Mail-Editoren und Formularfeldern.",
+    tip_inline_translate_memory: "Ubersetzen merkt sich die Sprache der anderen Person nach eingehenden Nachrichten.",
+    tip_tone_context: "Nutze Ton, wenn die Bedeutung stimmt, die Formulierung aber zu hart, zu trocken oder zu lang wirkt.",
+    tip_translate_reply_memory: "Nachdem eine eingehende Nachricht in deine Sprache ubersetzt wurde, wird die Antwortsprache automatisch gemerkt.",
+    tip_copy_page: "Bei normalem Seitentext ist Kopieren der sicherste Weg, das Ergebnis zu ubernehmen.",
     daily_limit_title: "Tagliches Freikontingent erreicht",
     daily_limit_text: "Du hast heute alle {limit} kostenlosen Ergebnisse genutzt.",
     buy_credits: "Credits kaufen",
@@ -213,11 +261,30 @@ const UI_STRINGS = {
     action_translate: "Traduire",
     action_grammar: "Grammaire",
     action_improve: "Ameliorer",
+    action_tone: "Ton",
     translate_to: "Traduire en",
+    tone_to: "Changer le ton en",
+    tone_professional: "Professionnel",
+    tone_friendly: "Amical",
+    tone_confident: "Assure",
+    tone_warm: "Chaleureux",
+    tone_shorter: "Plus court",
     result: "Resultat",
     result_placeholder: "Le resultat apparaitra ici",
     copy: "Copier",
+    reply: "Repondre",
+    reply_to: "Repondre en {language}",
+    reply_draft: "Brouillon de reponse",
+    reply_placeholder: "Ecrivez votre reponse dans votre langue",
     replace_text: "Remplacer le texte",
+    tip_label: "Conseil",
+    tip_inline_grammar_first: "Utilisez Grammaire d'abord si vous voulez un brouillon plus propre avant la traduction.",
+    tip_inline_tone_general: "Le ton aide quand le sens est juste mais que le message ne sonne pas encore bien.",
+    tip_inline_replace: "Remplacer le texte fonctionne le mieux dans les chats, les editeurs d'e-mail et les champs de formulaire.",
+    tip_inline_translate_memory: "Traduire retient la langue de l'autre personne apres les messages entrants.",
+    tip_tone_context: "Essayez Ton quand le sens est correct mais que la formulation semble trop seche, trop dure ou trop longue.",
+    tip_translate_reply_memory: "Apres la traduction d'un message entrant dans votre langue, la langue de reponse est retenue automatiquement.",
+    tip_copy_page: "Sur le texte normal d'une page, Copier est la facon la plus sure de reutiliser le resultat.",
     daily_limit_title: "Limite quotidienne gratuite atteinte",
     daily_limit_text: "Vous avez utilise les {limit} resultats gratuits d'aujourd'hui.",
     buy_credits: "Acheter des credits",
@@ -250,11 +317,30 @@ const UI_STRINGS = {
     action_translate: "Traduzir",
     action_grammar: "Gramatica",
     action_improve: "Melhorar",
+    action_tone: "Tom",
     translate_to: "Traduzir para",
+    tone_to: "Mudar tom para",
+    tone_professional: "Profissional",
+    tone_friendly: "Amigavel",
+    tone_confident: "Confiante",
+    tone_warm: "Acolhedor",
+    tone_shorter: "Mais curto",
     result: "Resultado",
     result_placeholder: "O resultado aparecera aqui",
     copy: "Copiar",
+    reply: "Responder",
+    reply_to: "Responder em {language}",
+    reply_draft: "Rascunho da resposta",
+    reply_placeholder: "Escreva sua resposta no seu idioma",
     replace_text: "Substituir texto",
+    tip_label: "Dica",
+    tip_inline_grammar_first: "Use Gramatica primeiro se quiser um rascunho mais limpo antes da traducao.",
+    tip_inline_tone_general: "Tom ajuda quando o significado esta certo, mas a mensagem ainda nao soa bem.",
+    tip_inline_replace: "Substituir texto funciona melhor em chats, compositores de e-mail e campos de formulario.",
+    tip_inline_translate_memory: "Traduzir lembra o idioma da outra pessoa depois das mensagens recebidas.",
+    tip_tone_context: "Use Tom quando o significado estiver certo, mas a redacao parecer seca demais, dura demais ou longa demais.",
+    tip_translate_reply_memory: "Depois que uma mensagem recebida e traduzida para o seu idioma, o idioma da resposta e lembrado automaticamente.",
+    tip_copy_page: "Em texto normal da pagina, Copiar e a forma mais segura de reutilizar o resultado.",
     daily_limit_title: "Limite diario gratuito atingido",
     daily_limit_text: "Voce usou todos os {limit} resultados gratuitos de hoje.",
     buy_credits: "Comprar creditos",
@@ -287,11 +373,30 @@ const UI_STRINGS = {
     action_translate: "翻訳",
     action_grammar: "文法",
     action_improve: "改善",
+    action_tone: "トーン",
     translate_to: "翻訳先",
+    tone_to: "トーンを変更",
+    tone_professional: "プロフェッショナル",
+    tone_friendly: "フレンドリー",
+    tone_confident: "自信のある",
+    tone_warm: "あたたかい",
+    tone_shorter: "短く",
     result: "結果",
     result_placeholder: "ここに結果が表示されます",
     copy: "コピー",
+    reply: "返信",
+    reply_to: "{language}で返信",
+    reply_draft: "返信ドラフト",
+    reply_placeholder: "あなたの言語で返信を書いてください",
     replace_text: "テキストを置換",
+    tip_label: "ヒント",
+    tip_inline_grammar_first: "翻訳の前に下書きを整えたいなら、まず文法を使ってください。",
+    tip_inline_tone_general: "意味は合っているのに、文面の雰囲気だけがしっくりこないときにトーンが役立ちます。",
+    tip_inline_replace: "テキストを置換は、チャット欄、メール作成画面、フォーム欄で最も使いやすいです。",
+    tip_inline_translate_memory: "翻訳は、相手から来たメッセージの言語を記憶します。",
+    tip_tone_context: "意味は合っているのに、表現が強すぎる、そっけない、長すぎると感じるときはトーンを試してください。",
+    tip_translate_reply_memory: "受信メッセージをあなたの言語に翻訳した後、返信言語は自動的に記憶されます。",
+    tip_copy_page: "通常のページテキストでは、結果を再利用するならコピーが最も安全です。",
     daily_limit_title: "本日の無料上限に達しました",
     daily_limit_text: "本日の無料結果 {limit} 件をすべて使い切りました。",
     buy_credits: "クレジットを購入",
@@ -324,11 +429,30 @@ const UI_STRINGS = {
     action_translate: "번역",
     action_grammar: "문법",
     action_improve: "개선",
+    action_tone: "톤",
     translate_to: "번역할 언어",
+    tone_to: "톤 변경",
+    tone_professional: "전문적으로",
+    tone_friendly: "친근하게",
+    tone_confident: "자신감 있게",
+    tone_warm: "따뜻하게",
+    tone_shorter: "더 짧게",
     result: "결과",
     result_placeholder: "여기에 결과가 표시됩니다",
     copy: "복사",
+    reply: "답장",
+    reply_to: "{language}(으)로 답장",
+    reply_draft: "답장 초안",
+    reply_placeholder: "내 언어로 답장을 작성하세요",
     replace_text: "텍스트 바꾸기",
+    tip_label: "팁",
+    tip_inline_grammar_first: "번역 전에 초안을 더 깔끔하게 만들고 싶다면 먼저 문법을 사용하세요.",
+    tip_inline_tone_general: "의미는 맞지만 메시지의 느낌이 어색할 때 톤 기능이 도움이 됩니다.",
+    tip_inline_replace: "텍스트 바꾸기는 채팅창, 이메일 작성기, 입력 폼에서 가장 잘 작동합니다.",
+    tip_inline_translate_memory: "번역은 상대방의 수신 메시지 언어를 기억합니다.",
+    tip_tone_context: "의미는 맞지만 표현이 너무 강하거나 건조하거나 길게 느껴질 때 톤을 사용해 보세요.",
+    tip_translate_reply_memory: "수신 메시지를 내 언어로 번역하면 답장 언어가 자동으로 기억됩니다.",
+    tip_copy_page: "일반 페이지 텍스트에서는 결과를 다시 사용할 때 복사가 가장 안전합니다.",
     daily_limit_title: "오늘의 무료 한도에 도달했습니다",
     daily_limit_text: "오늘 무료 결과 {limit}개를 모두 사용했습니다.",
     buy_credits: "크레딧 구매",
@@ -361,11 +485,30 @@ const UI_STRINGS = {
     action_translate: "翻译",
     action_grammar: "语法",
     action_improve: "优化",
+    action_tone: "语气",
     translate_to: "翻译为",
+    tone_to: "调整语气为",
+    tone_professional: "专业",
+    tone_friendly: "友好",
+    tone_confident: "自信",
+    tone_warm: "温和",
+    tone_shorter: "更简短",
     result: "结果",
     result_placeholder: "结果会显示在这里",
     copy: "复制",
+    reply: "回复",
+    reply_to: "回复为{language}",
+    reply_draft: "回复草稿",
+    reply_placeholder: "用你的语言写回复",
     replace_text: "替换文本",
+    tip_label: "提示",
+    tip_inline_grammar_first: "如果你想在翻译前先把草稿整理得更干净，先使用语法。",
+    tip_inline_tone_general: "当意思是对的，但语气感觉不太对时，语气功能会很有帮助。",
+    tip_inline_replace: "替换文本最适合在聊天框、邮件编辑器和表单字段中使用。",
+    tip_inline_translate_memory: "翻译会记住对方来信的语言。",
+    tip_tone_context: "如果意思没问题，但措辞显得太生硬、太平淡或太长，试试语气功能。",
+    tip_translate_reply_memory: "当收到的消息被翻译成你的语言后，回复语言会被自动记住。",
+    tip_copy_page: "在普通网页文本中，复制是复用结果最稳妥的方式。",
     daily_limit_title: "今日免费额度已用完",
     daily_limit_text: "你今天已经用完了全部 {limit} 次免费结果。",
     buy_credits: "购买额度",
@@ -398,11 +541,30 @@ const UI_STRINGS = {
     action_translate: "Перевод",
     action_grammar: "Грамматика",
     action_improve: "Улучшить",
+    action_tone: "Тон",
     translate_to: "Перевести на",
+    tone_to: "Изменить тон на",
+    tone_professional: "Профессиональный",
+    tone_friendly: "Дружелюбный",
+    tone_confident: "Уверенный",
+    tone_warm: "Теплый",
+    tone_shorter: "Короче",
     result: "Результат",
     result_placeholder: "Результат появится здесь",
     copy: "Копировать",
+    reply: "Ответить",
+    reply_to: "Ответить на {language}",
+    reply_draft: "Черновик ответа",
+    reply_placeholder: "Напишите ответ на вашем языке",
     replace_text: "Заменить текст",
+    tip_label: "Подсказка",
+    tip_inline_grammar_first: "Сначала используйте Грамматику, если хотите сначала сделать черновик чище перед переводом.",
+    tip_inline_tone_general: "Тон полезен, когда смысл правильный, но сама формулировка звучит неудачно.",
+    tip_inline_replace: "Заменить текст лучше всего работает в чатах, email-редакторах и полях форм.",
+    tip_inline_translate_memory: "Перевод запоминает язык собеседника после входящих сообщений.",
+    tip_tone_context: "Попробуйте Тон, если смысл верный, но текст звучит слишком резко, сухо или длинно.",
+    tip_translate_reply_memory: "После перевода входящего сообщения на ваш язык язык ответа запоминается автоматически.",
+    tip_copy_page: "На обычном тексте страницы безопаснее всего использовать Копировать.",
     daily_limit_title: "Дневной бесплатный лимит исчерпан",
     daily_limit_text: "Вы использовали все {limit} бесплатных результатов на сегодня.",
     buy_credits: "Купить лимиты",
@@ -460,11 +622,30 @@ const UI_STRINGS = {
     action_translate: "Переклад",
     action_grammar: "Граматика",
     action_improve: "Покращити",
+    action_tone: "Тон",
     translate_to: "Перекласти на",
+    tone_to: "Змінити тон на",
+    tone_professional: "Професійний",
+    tone_friendly: "Дружній",
+    tone_confident: "Упевнений",
+    tone_warm: "Теплий",
+    tone_shorter: "Коротше",
     result: "Результат",
     result_placeholder: "Результат з'явиться тут",
     copy: "Копіювати",
+    reply: "Відповісти",
+    reply_to: "Відповісти {language}",
+    reply_draft: "Чернетка відповіді",
+    reply_placeholder: "Напишіть відповідь своєю мовою",
     replace_text: "Замінити текст",
+    tip_label: "Підказка",
+    tip_inline_grammar_first: "Спочатку використайте Граматику, якщо хочете зробити чернетку чистішою перед перекладом.",
+    tip_inline_tone_general: "Тон корисний, коли зміст правильний, але саме формулювання звучить невдало.",
+    tip_inline_replace: "Замінити текст найкраще працює в чатах, email-редакторах і полях форм.",
+    tip_inline_translate_memory: "Переклад запам'ятовує мову співрозмовника після вхідних повідомлень.",
+    tip_tone_context: "Спробуйте Тон, якщо зміст правильний, але текст звучить надто різко, сухо або довго.",
+    tip_translate_reply_memory: "Після перекладу вхідного повідомлення вашою мовою мова відповіді запам'ятовується автоматично.",
+    tip_copy_page: "На звичайному тексті сторінки найбезпечніше використовувати Копіювати.",
     daily_limit_title: "Денний безкоштовний ліміт вичерпано",
     daily_limit_text: "Ви використали всі {limit} безкоштовних результатів на сьогодні.",
     buy_credits: "Купити ліміти",
@@ -573,7 +754,7 @@ function renderAppLanguageMenu() {
 function renderToneOptions() {
   return TONE_OPTIONS.map((tone) => {
     const selected = tone.value === DEFAULT_TONE ? " selected" : ""
-    return `<option value="${tone.value}"${selected}>${tone.label}</option>`
+    return `<option value="${tone.value}"${selected}>${t(tone.labelKey)}</option>`
   }).join("")
 }
 
@@ -2460,10 +2641,10 @@ function updateReplyDraftVisibility() {
 function getReplyToggleLabel() {
   const replyTargetLanguage = getReplyTargetLanguage()
   if (replyTargetLanguage) {
-    return `Reply to ${replyTargetLanguage}`
+    return t("reply_to", { language: replyTargetLanguage })
   }
 
-  return "Reply"
+  return t("reply")
 }
 
 function updateResultPreview() {
@@ -2819,18 +3000,24 @@ function updateInlineTip() {
 
 function getContextualTip() {
   if (state.currentAction === "tone") {
-    return "Try Tone when the meaning is right but the wording feels too harsh, too dry, or too long."
+    return t("tip_tone_context")
   }
 
   if (state.currentAction === "translate" && looksLikeRussianText(state.selectedText)) {
-    return "After an incoming message is translated to your language, the reply language is remembered automatically."
+    return t("tip_translate_reply_memory")
   }
 
   if (state.selectionKind === "page") {
-    return "On regular page text, Copy is the safest way to reuse the result."
+    return t("tip_copy_page")
   }
 
-  return INLINE_TIPS[Math.floor(Math.random() * INLINE_TIPS.length)]
+  const inlineTips = [
+    t("tip_inline_grammar_first"),
+    t("tip_inline_tone_general"),
+    t("tip_inline_replace"),
+    t("tip_inline_translate_memory")
+  ]
+  return inlineTips[Math.floor(Math.random() * inlineTips.length)]
 }
 
 function readInputSelection(element) {
@@ -3452,6 +3639,8 @@ function normalizeCorrespondenceLanguage(language) {
 function applyTranslations() {
   translateLabel.textContent = t("translate_to")
   toneLabel.textContent = t("tone_to")
+  toneSelect.innerHTML = renderToneOptions()
+  toneSelect.value = state.tone
   onboardingBadge.textContent = t("onboarding_badge")
   onboardingGuideSkipButton.textContent = t("onboarding_button_skip")
   languagePromptTitle.textContent = t("language_prompt_title")
@@ -3463,10 +3652,16 @@ function applyTranslations() {
   previewCopyButton.setAttribute("title", t("copy"))
   replyDraftCopyButton.setAttribute("aria-label", t("copy"))
   replyDraftCopyButton.setAttribute("title", t("copy"))
+  const replyDraftLabel = panel.querySelector('label[for="ai-writer-mvp-reply-draft"]')
+  if (replyDraftLabel) {
+    replyDraftLabel.textContent = t("reply_draft")
+  }
+  replyDraftField.placeholder = t("reply_placeholder")
   feedbackFabButton.setAttribute("aria-label", t("leave_feedback"))
   feedbackFabButton.setAttribute("title", t("leave_feedback"))
   setLoaderMessage(state.currentAction)
   applyButton.textContent = t("replace_text")
+  replyToggleButton.textContent = getReplyToggleLabel()
   replyTranslateButton.textContent = t("action_translate")
   buyCreditsButton.textContent = t("buy_credits")
   openFeedbackButton.textContent = t("leave_feedback")
