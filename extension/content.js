@@ -88,7 +88,7 @@ const UI_STRINGS = {
     close: "Close",
     preferred_badge: "preferred",
     language_help: "Choose your main correspondence language. Your text suggests the conversation language, and vice versa.",
-    model_buy_next: "Thanks for your interest. This $2 access flow is not live yet, and no money has been charged. For this local purchase simulation, today's free limit has been reset and the app is available again.",
+    model_buy_next: "Thanks for your interest. This $2 access flow is not live yet, and no money has been charged. In this purchase simulation, today's free limit has been reset and the app is available again.",
     feedback_saved: "Thanks, your feedback was sent.",
     feedback_failed: "Feedback could not be sent yet. Please check the feedback webhook setup.",
     no_text: "No text selected.",
@@ -154,7 +154,7 @@ const UI_STRINGS = {
     close: "Cerrar",
     preferred_badge: "preferido",
     language_help: "Elige aqui tu idioma principal de correspondencia. El texto en tu idioma sugerira el idioma de la conversacion, y el texto en el idioma de la conversacion sugerira tu idioma.",
-    model_buy_next: "El onboarding de creditos sera el siguiente paso. En esta simulacion local de compra, el limite gratuito de hoy se restablecio y la app vuelve a estar disponible.",
+    model_buy_next: "El onboarding de creditos sera el siguiente paso. En esta simulacion de compra, el limite gratuito de hoy se restablecio y la app vuelve a estar disponible.",
     provider_next: "El onboarding del proveedor de IA sera el siguiente paso.",
     feedback_saved: "Gracias, tu feedback se guardo. Luego conectaremos el envio.",
     no_text: "No hay texto seleccionado.",
@@ -191,7 +191,7 @@ const UI_STRINGS = {
     close: "Schliessen",
     preferred_badge: "bevorzugt",
     language_help: "Wahle hier deine Hauptsprache fur Korrespondenz. Text in deiner Sprache schlagt die Gesprachssprache vor, und Text in der Gesprachssprache schlagt deine Sprache vor.",
-    model_buy_next: "Das Credits-Onboarding ist der nachste Schritt. In dieser lokalen Kaufsimulation wurde das heutige Freikontingent zuruckgesetzt und die App ist wieder verfugbar.",
+    model_buy_next: "Das Credits-Onboarding ist der nachste Schritt. In dieser Kaufsimulation wurde das heutige Freikontingent zuruckgesetzt und die App ist wieder verfugbar.",
     provider_next: "Das Onboarding fur KI-Anbieter ist der nachste Schritt.",
     feedback_saved: "Danke, dein Feedback wurde gespeichert. Als Nachstes verbinden wir den Versand.",
     no_text: "Kein Text ausgewahlt.",
@@ -228,7 +228,7 @@ const UI_STRINGS = {
     close: "Fermer",
     preferred_badge: "prefere",
     language_help: "Choisissez ici votre langue principale de correspondance. Un texte dans votre langue suggerera la langue de la conversation, et un texte dans la langue de la conversation suggerera votre langue.",
-    model_buy_next: "L'onboarding des credits sera la prochaine etape. Dans cette simulation locale d'achat, la limite gratuite du jour a ete reinitialisee et l'app est de nouveau disponible.",
+    model_buy_next: "L'onboarding des credits sera la prochaine etape. Dans cette simulation d'achat, la limite gratuite du jour a ete reinitialisee et l'app est de nouveau disponible.",
     provider_next: "L'onboarding du fournisseur IA sera la prochaine etape.",
     feedback_saved: "Merci, votre retour a ete enregistre. Nous connecterons ensuite l'envoi.",
     no_text: "Aucun texte selectionne.",
@@ -265,7 +265,7 @@ const UI_STRINGS = {
     close: "Fechar",
     preferred_badge: "preferido",
     language_help: "Escolha aqui seu idioma principal de correspondencia. Texto no seu idioma sugerira o idioma da conversa, e texto no idioma da conversa sugerira o seu idioma.",
-    model_buy_next: "O onboarding de creditos sera o proximo passo. Nesta simulacao local de compra, o limite gratuito de hoje foi redefinido e o app esta disponivel novamente.",
+    model_buy_next: "O onboarding de creditos sera o proximo passo. Nesta simulacao de compra, o limite gratuito de hoje foi redefinido e o app esta disponivel novamente.",
     provider_next: "O onboarding do provedor de IA sera o proximo passo.",
     feedback_saved: "Obrigado, seu feedback foi salvo. Depois vamos conectar o envio.",
     no_text: "Nenhum texto selecionado.",
@@ -302,7 +302,7 @@ const UI_STRINGS = {
     close: "閉じる",
     preferred_badge: "推奨",
     language_help: "ここで主にやり取りする言語を選びます。あなたの言語のテキストでは会話相手の言語が提案され、会話相手の言語のテキストではあなたの言語が提案されます。",
-    model_buy_next: "クレジット購入のオンボーディングは次のステップです。このローカル購入シミュレーションでは、本日の無料上限がリセットされ、アプリを再び利用できます。",
+    model_buy_next: "クレジット購入のオンボーディングは次のステップです。この購入シミュレーションでは、本日の無料上限がリセットされ、アプリを再び利用できます。",
     provider_next: "AIプロバイダー接続のオンボーディングは次のステップです。",
     feedback_saved: "ありがとうございます。フィードバックを保存しました。次に送信連携を追加します。",
     no_text: "テキストが選択されていません。",
@@ -339,7 +339,7 @@ const UI_STRINGS = {
     close: "닫기",
     preferred_badge: "선호",
     language_help: "여기에서 주요 대화 언어를 선택하세요. 내 언어의 텍스트는 대화 언어를 추천하고, 대화 언어의 텍스트는 내 언어를 추천합니다.",
-    model_buy_next: "크레딧 온보딩은 다음 단계로 추가됩니다. 이 로컬 구매 시뮬레이션에서는 오늘의 무료 한도가 초기화되어 앱을 다시 사용할 수 있습니다.",
+    model_buy_next: "크레딧 온보딩은 다음 단계로 추가됩니다. 이 구매 시뮬레이션에서는 오늘의 무료 한도가 초기화되어 앱을 다시 사용할 수 있습니다.",
     provider_next: "AI 제공업체 온보딩은 다음 단계로 추가됩니다.",
     feedback_saved: "감사합니다. 피드백이 저장되었습니다. 다음으로 전송 기능을 연결하겠습니다.",
     no_text: "선택된 텍스트가 없습니다.",
@@ -376,7 +376,7 @@ const UI_STRINGS = {
     close: "关闭",
     preferred_badge: "首选",
     language_help: "在这里选择你的主要沟通语言。你的语言文本会建议对话语言，对话语言文本会建议你的语言。",
-    model_buy_next: "购买额度的引导将是下一步。在本地购买模拟中，今天的免费额度已重置，应用现在可以继续使用。",
+    model_buy_next: "购买额度的引导将是下一步。在这次购买模拟中，今天的免费额度已重置，应用现在可以继续使用。",
     provider_next: "连接 AI 提供商的引导将是下一步。",
     feedback_saved: "谢谢，你的反馈已保存。下一步我们会接入发送功能。",
     no_text: "没有选中文本。",
@@ -413,7 +413,7 @@ const UI_STRINGS = {
     close: "Закрыть",
     preferred_badge: "предпочтительный",
     language_help: "Здесь выбери основной язык переписки. Для текста на твоем языке будет предлагаться язык переписки, а для текста на языке переписки будет предлагаться твой язык.",
-    model_buy_next: "Онбординг покупки лимитов будет следующим шагом. В этой локальной эмуляции покупки дневной лимит сброшен, и приложение снова доступно.",
+    model_buy_next: "Онбординг покупки лимитов будет следующим шагом. В этой эмуляции покупки дневной лимит сброшен, и приложение снова доступно.",
     provider_next: "Онбординг подключения AI-провайдера будет следующим шагом.",
     feedback_saved: "Спасибо, фидбек сохранен. Дальше подключим отправку.",
     no_text: "Текст не выбран.",
@@ -475,7 +475,7 @@ const UI_STRINGS = {
     close: "Закрити",
     preferred_badge: "пріоритетний",
     language_help: "Тут обери основну мову листування. Для тексту твоєю мовою пропонуватиметься мова листування, а для тексту мовою листування пропонуватиметься твоя мова.",
-    model_buy_next: "Онбординг покупки лімітів буде наступним кроком. У цій локальній емуляції покупки денний ліміт скинуто, і застосунок знову доступний.",
+    model_buy_next: "Онбординг покупки лімітів буде наступним кроком. У цій емуляції покупки денний ліміт скинуто, і застосунок знову доступний.",
     provider_next: "Онбординг підключення AI-провайдера буде наступним кроком.",
     feedback_saved: "Дякуємо, фідбек збережено. Далі підключимо відправку.",
     no_text: "Текст не вибрано.",
@@ -1002,30 +1002,20 @@ async function simulateLimitPurchase() {
   centerPanelInViewport()
   syncLimitModalToPanel()
 
-  if (!IS_DEVELOPMENT_BUILD) {
-    void trackEvent("limit_purchase_interest_clicked", {
-      success: true,
-      properties: {
-        resetDailyUsage: false
-      }
-    })
-    return
-  }
-
   try {
     await chrome.storage.local.remove(DAILY_USAGE_STORAGE_KEY)
-    void trackEvent("limit_purchase_simulated", {
+    void trackEvent(IS_DEVELOPMENT_BUILD ? "limit_purchase_simulated" : "limit_purchase_interest_clicked", {
       success: true,
       properties: {
         resetDailyUsage: true
       }
     })
   } catch (error) {
-    void trackEvent("limit_purchase_simulated", {
+    void trackEvent(IS_DEVELOPMENT_BUILD ? "limit_purchase_simulated" : "limit_purchase_interest_clicked", {
       success: false,
       errorMessage: error instanceof Error ? error.message : "Daily limit reset failed."
     })
-    setStatus("Purchase simulated, but the local limit could not be reset.", true)
+    setStatus("Purchase simulated, but the daily limit could not be reset.", true)
   }
 }
 

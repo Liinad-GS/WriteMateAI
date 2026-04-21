@@ -17,7 +17,7 @@ Last updated: April 16, 2026
 - Screenshot plan exists in `SCREENSHOT_SHOTLIST.md`
 - Backend request size and payload limits are implemented
 - Backend CORS allowlist support is implemented
-- Paid-interest button can be measured without resetting limits in the packaged production build
+- Paid-interest button can be measured and resets limits in the packaged production build
 - Production backend is deployed at `https://writemateai.up.railway.app`
 - Draft production zip was generated at `dist/WriteMateAI-chrome-0.2.0.zip`
 - Draft production zip points to the Railway backend and uses `BUILD_CHANNEL = "production"`

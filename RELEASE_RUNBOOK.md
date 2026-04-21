@@ -161,7 +161,7 @@ Test checklist:
 - Copy result works
 - Replace text works in a text area
 - Daily limit modal opens
-- "Buy access" records interest but does not reset limits in production build
+- "Buy access" records interest and resets limits in production build
 - Feedback submits, if configured
 
 ## Stage 5: Store Listing
