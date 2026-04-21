@@ -3639,6 +3639,7 @@ function normalizeCorrespondenceLanguage(language) {
 function applyTranslations() {
   translateLabel.textContent = t("translate_to")
   toneLabel.textContent = t("tone_to")
+  refreshLanguageSelectOptions()
   toneSelect.innerHTML = renderToneOptions()
   toneSelect.value = state.tone
   onboardingBadge.textContent = t("onboarding_badge")
